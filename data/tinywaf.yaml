@@ -1,0 +1,31 @@
+listen:
+  ips:
+    - 127.0.0.1
+  ports:
+    - source: 8080
+      target: 80
+    # - 80
+    # - 443
+  # By default websocket connections are proxied to the destination
+  websockets: true
+  tls:
+    # @todo: config for TLS/SSL certificate(s)
+
+upstream:
+  # Only one destination can be set. The port and path of the request will be
+  # copied from the original one.
+  # The protocol (HTTP/HTTPS) is required (HTTP is recommended for same-machine,
+  # HTTPS is recommended for dedicated machine)
+  destination: http://localhost
+  headers:
+    # By default headers from the inbound request are sent unmodified to the
+    # destination server
+    copyAll: true
+
+log:
+  file: ./data/tinywaf.log # /var/log/tinywaf.log
+  levels:
+    debug: false # Debug mode - log everything
+    access: false # Log access requests to all URLs
+    warn: true # Log warnings about suspicious activity
+    block: true # Log when requests are blocked due to rules
