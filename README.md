@@ -19,7 +19,7 @@ shield the server from attacks.
 * Hosted cloud-based WAFs are too expensive for small websites/apps.
 
 
-## Guiding principles
+## Guiding principles for development
 
 In no particular order:
 
@@ -29,11 +29,57 @@ it should also be possible to run it on a separate, dedicated machine.
 features as possible.
 * TinyWAF should not act as a load balancer or reverse proxy (except the bare
 minimum to achieve the requirements of a firewall).
+* TinyWAF should be invisible to the user and webserver unless a request/response
+is blocked.
 * TinyWAF should be simple to configure, and ship with sensible default
 security settings (eg. with a set of rules enabled by detault).
 * It should be possible to define custom firewall rules and policies for TinyWAF.
 * TinyWAF should be thoroughly unit-tested to prevent regressions and issues.
 
+
+## How are rules evaluated and requests blocked?
+
+<!-- @todo: move this whole section to docs site -->
+
+TinyWAF works similarly to the OWASP Core RuleSet. Rules are evaluated and an
+anomaly score is given to the request based on each evaluated rule. If the anomaly
+score is above a defined threshold, then the request is blocked.
+
+Rules are run against inbound requests to prevent SQL injection attacks, etc, but
+rules also run against oubound requests to prevent information exposure (eg. leaking
+server file paths)
+
+Rules are defined in YAML and stored in the TinyWAF config directory. TinyWAF
+ships with a set of default rules maintaned by the TinyWAF team, but users can
+also write their own rules and choose which ones to enable.
+
+### Anatomy of a rule
+
+Rules are defined in yaml files. Each ruleset yaml file must start with either
+`inbound-` or `-outbound-` followed by a hypenated rule group name.
+
+Inside each group file is a `rules` array with the following YAML structure:
+
+* `id (string)` - A unique ID for the rule within this group (file)
+* `priority (int)` - [OPTIONAL] Rules are executed in priority order (0 first)
+* `inspect (string|string[])` - Which part of the request/response should this rule apply to
+* `fields (string|string[])` - [OPTIONAL] Which fields should this rule apply to
+* `operators (string[])` - An array of operators to be run
+* `action ('block'|'warn'|'none')` - What action to take if a request/response matches this rule
+
+Here's an example rule that will block any request/response with a non-numeric
+Content-Length header:
+
+```
+rules:
+  - id: content-length-not-numeric
+    inspect: HEADERS
+    fields: "Content-Length"
+    operators:
+      - regex: ^\d+$
+    severity: 3
+    action: block
+```
 
 ## Development quickstart
 
