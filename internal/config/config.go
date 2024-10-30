@@ -8,10 +8,11 @@ import (
 // @todo: check validation rules are correct
 type MainConfig struct {
 	Listen struct {
-		Ips        []string     `validate:"required,gt=0"`
-		Ports      []ListenPort `validate:"required,gt=0"`
-		Websockets bool
-		Tls        struct {
+		Ips             []string     `validate:"required,gt=0"`
+		Ports           []ListenPort `validate:"required,gt=0"`
+		HealthcheckPath string
+		Websockets      bool
+		Tls             struct {
 			// @todo: TLS certificate config
 		}
 	}

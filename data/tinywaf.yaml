@@ -8,6 +8,8 @@ listen:
     # - source: 443
   # By default websocket connections are proxied to the destination
   websockets: true
+  # Set healthcheck to "" to disable it
+  healthcheckPath: "/healthcheck"
   tls:
     # @todo: config for TLS/SSL certificate(s)
 

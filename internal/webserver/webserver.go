@@ -32,9 +32,10 @@ func Start() error {
 
 			// @todo: custom responses for gateway errors (502/504)
 
-			// @todo: move healthcheck path to config
-			// Register the healthcheck endpoint
-			mux.HandleFunc("/healthcheck", handleHealthCheckRequest)
+			// Register the healthcheck endpoint if set
+			if config.Listen.HealthcheckPath != "" {
+				mux.HandleFunc(config.Listen.HealthcheckPath, handleHealthCheckRequest)
+			}
 
 			// Register the reverse proxy handler that runs rules and forwards requests
 			mux.HandleFunc("/", ProxyRequestHandler(proxy, targetUrl))
