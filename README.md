@@ -1,7 +1,9 @@
-# TinyWAF
+<h1 align="center">🚧 TinyWAF 🚧</h1>
 
-TinyWAF is a lightweight Web Application Firewall designed for easy self-hosting
-either on a dedicated machine or on the same machine as your web server.
+<p align="center">
+TinyWAF is a lightweight Web Application Firewall designed for self-hosting.
+It can run on the same machine as your web server, or on a dedicated machine.
+</p>
 
 TinyWAF was conceived after @nevadascout set up awstats to report traffic stats
 from apache log files on a web server on the public internet. The traffic stats
