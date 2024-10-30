@@ -11,6 +11,9 @@ requests looking for files related to wordpress scripts. He decided to create a
 simple open source WAF that could drop in front of Apache on his server and
 shield the server from attacks.
 
+> [!WARNING]
+> TinyWAF is not ready for production use!
+
 
 ## Why does TinyWAF exist?
 
