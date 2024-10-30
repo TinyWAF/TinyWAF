@@ -5,6 +5,12 @@ TinyWAF is a lightweight Web Application Firewall designed for self-hosting.
 It can run on the same machine as your web server, or on a dedicated machine.
 </p>
 
+> [!WARNING]
+> TinyWAF is not ready for production use!
+
+
+## Why does TinyWAF exist?
+
 TinyWAF was conceived after @nevadascout set up awstats to report traffic stats
 from apache log files on a web server on the public internet. The traffic stats
 revealed thousands of fishing hits to files or endpoints that didn't exist - bots
@@ -13,15 +19,10 @@ requests looking for files related to wordpress scripts. He decided to create a
 simple open source WAF that could drop in front of Apache on his server and
 shield the server from attacks.
 
-> [!WARNING]
-> TinyWAF is not ready for production use!
-
-
-## Why does TinyWAF exist?
-
 * Most web sites/apps don't have a WAF protecting them.
 * However, most web sites/apps could benefit from a WAF (even a simple one).
 * Hosted cloud-based WAFs are too expensive for small websites/apps.
+* Self-hosting is cool.
 
 
 ## Guiding principles for development
