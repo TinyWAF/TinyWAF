@@ -10,7 +10,7 @@ type MainConfig struct {
 	Listen struct {
 		Ips        []string     `validate:"required,gt=0"`
 		Ports      []ListenPort `validate:"required,gt=0"`
-		Websockets bool         `validate:"required"`
+		Websockets bool
 		Tls        struct {
 			// @todo: TLS certificate config
 		}
@@ -18,16 +18,13 @@ type MainConfig struct {
 
 	Upstream struct {
 		Destination string `validate:"required"`
-		Headers     struct {
-			CopyAll bool `validate:"required"`
-		}
+		Timeout     uint
 	}
 
 	// @todo: validations
 	Log struct {
-		File   string
-		Levels struct {
-			debug  bool
+		Outfile string `validate:"required"`
+		Levels  struct {
 			access bool
 			warn   bool
 			block  bool
@@ -39,8 +36,6 @@ type ListenPort struct {
 	Source uint `validate:"required,gt=0"`
 	Target uint `validate:"gt=0"`
 }
-
-// var MainConfiguration *MainConfig
 
 func LoadConfig() (MainConfig, error) {
 	return loadConfig(viper.New())
