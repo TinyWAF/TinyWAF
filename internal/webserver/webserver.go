@@ -25,7 +25,7 @@ func Start() error {
 			mux := http.NewServeMux()
 
 			// Register the healthcheck endpoint
-			mux.HandleFunc("/healthcheck", handleHealthCheckRequest)
+			mux.HandleFunc("/tinywafhealthcheck", handleHealthCheckRequest)
 			mux.HandleFunc("/", ProxyRequestHandler(proxy, targetUrl))
 
 			// Start the webserver for this IP and port combination
