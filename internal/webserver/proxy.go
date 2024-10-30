@@ -32,9 +32,15 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 			log.Println(k, r.Header.Get(k))
 		}
 
-		// @todo: apply firewall rules here (inc. rate limiting)
+		// @todo: run request firewall rules here (inc. rate limiting)
+		//
 		// @todo: if request fails firewall rules, use `w` to write failed response and return
 		// @todo: save rate limit data in memory but persist to DB periodically to survive restarts
+
+		proxy.ModifyResponse = func(res *http.Response) error {
+			// @todo: run response rule analysis
+			return nil
+		}
 
 		fmt.Printf("[ TinyWAF ] Forwarding request to %s at %s\n", r.URL, time.Now().UTC())
 

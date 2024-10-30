@@ -30,8 +30,13 @@ func Start() error {
 			proxy := NewProxy(targetUrl)
 			mux := http.NewServeMux()
 
+			// @todo: custom responses for gateway errors (502/504)
+
+			// @todo: move healthcheck path to config
 			// Register the healthcheck endpoint
-			mux.HandleFunc("/tinywafhealthcheck", handleHealthCheckRequest)
+			mux.HandleFunc("/healthcheck", handleHealthCheckRequest)
+
+			// Register the reverse proxy handler that runs rules and forwards requests
 			mux.HandleFunc("/", ProxyRequestHandler(proxy, targetUrl))
 
 			// Start the webserver for this IP and port combination
