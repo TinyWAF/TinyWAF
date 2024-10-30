@@ -4,8 +4,8 @@ listen:
   ports:
     - source: 8080
       target: 80
-    # - 80
-    # - 443
+    # - source: 80
+    # - source: 443
   # By default websocket connections are proxied to the destination
   websockets: true
   tls:

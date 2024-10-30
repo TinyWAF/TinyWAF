@@ -9,7 +9,7 @@ import (
 func main() {
 	// @todo: load tinywaf config
 	// @todo: load firewall rules
-	// @todo: connect to local sqlite db (rate limiting)
+	// @todo: connect to local sqlite db (for rate limiting + rule evaluation with SQL)
 
 	// @todo: handle first-run (eg. create log files, data dir, sqlite DB)
 

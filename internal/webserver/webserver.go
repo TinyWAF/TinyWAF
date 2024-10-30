@@ -18,7 +18,13 @@ func Start() error {
 	// Loop over listen IPs and create a server for each IP:port combination
 	for _, listenIp := range config.Listen.Ips {
 		for _, portConfig := range config.Listen.Ports {
-			targetUrl, _ := url.Parse(fmt.Sprintf("%v:%v", config.Upstream.Destination, portConfig.Target))
+			// If the target port isn't set, use the same as the source port
+			targetPort := portConfig.Target
+			if targetPort == 0 {
+				targetPort = portConfig.Source
+			}
+
+			targetUrl, _ := url.Parse(fmt.Sprintf("%v:%v", config.Upstream.Destination, targetPort))
 
 			// Register the proxy handler
 			proxy := NewProxy(targetUrl)

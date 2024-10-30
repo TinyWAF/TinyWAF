@@ -36,8 +36,8 @@ type MainConfig struct {
 }
 
 type ListenPort struct {
-	Source uint `validate:"required"`
-	Target uint
+	Source uint `validate:"required,gt=0"`
+	Target uint `validate:"gt=0"`
 }
 
 // var MainConfiguration *MainConfig
@@ -48,14 +48,11 @@ func LoadConfig() (MainConfig, error) {
 
 func loadConfig(v *viper.Viper) (MainConfig, error) {
 	// @todo: log which config files are loaded
-	// @todo: load rules config
 
 	v.SetConfigType("yaml")
 	v.SetConfigName("tinywaf")       // file called tinywaf.yml|yaml
 	v.AddConfigPath("/etc/tinywaf/") // in this dir, or...
 	v.AddConfigPath("./data/")       // in data directory
-
-	// @todo: listen.ports array should accept ints or ListenPort struct (if int, then source+target is same)
 
 	err := v.ReadInConfig()
 	if err != nil {
