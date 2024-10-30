@@ -79,8 +79,8 @@ TinyWAF works similarly to the OWASP Core RuleSet. Rules are evaluated and an
 anomaly score is given to the request based on each evaluated rule. If the anomaly
 score is above a defined threshold, then the request is blocked.
 
-Rules are run against inbound requests to prevent SQL injection attacks, etc, but
-rules also run against oubound requests to prevent information exposure (eg. leaking
+Rules are run against requests to prevent SQL injection attacks, etc, but
+rules also run against responses to prevent information exposure (eg. leaking
 server file paths)
 
 Rules are defined in YAML and stored in the TinyWAF config directory. TinyWAF
@@ -90,7 +90,7 @@ also write their own rules and choose which ones to enable.
 ### Anatomy of a rule
 
 Rules are defined in yaml files. Each ruleset yaml file must start with either
-`inbound-` or `-outbound-` followed by a hypenated rule group name.
+`request-` or `response-` followed by a hypenated rule group name.
 
 Inside each group file is a `rules` array with the following YAML structure:
 
