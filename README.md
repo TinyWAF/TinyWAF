@@ -55,6 +55,7 @@ security settings (eg. with a set of rules enabled by detault).
 | HTTPS/TLS support | :x: Not started |
 | Websocket forwarding | :x: Not started |
 | Metrics/reporting | :x: Not started |
+| Custom error pages | :x: Not started |
 | AbuseIPDB integration | :x: Not started |
 | CrowdSec integration | :x: Not started |
 
