@@ -37,6 +37,36 @@ security settings (eg. with a set of rules enabled by detault).
 * TinyWAF should be thoroughly unit-tested to prevent regressions and issues.
 
 
+## Development status
+
+### TinyWAF binary
+
+|**Feature**|**Status**|
+|:---|:---|
+| Request interception and reverse proxy forwarding | :heavy_check_mark: Done |
+| Health check endpoint | :heavy_check_mark: Done |
+| Define rules in YAML | :construction: In progress |
+| Request rule evaluation | :construction: In progress |
+| Response rule evaluation | :construction: In progress |
+| Rate limiting | :x: Not started |
+| HTTPS/TLS support | :x: Not started |
+| Websocket forwarding | :x: Not started |
+| Metrics/reporting | :x: Not started |
+| AbuseIPDB integration | :x: Not started |
+| CrowdSec integration | :x: Not started |
+
+
+### TinyWAF default/maintained rulesets
+
+|**Ruleset**|**Status**|
+|:---|:---|
+| Port of OWASP CRS | :x: Not started |
+| No Wordpress (for sites not running Wordpress) | :x: Not started |
+| No Drupal (for sites not running Drupal) | :x: Not started |
+| No Joomla (for sites not running Joomla) | :x: Not started |
+| ...others | :x: Not started |
+
+
 ## How are rules evaluated and requests blocked?
 
 <!-- @todo: move this whole section to docs site -->
