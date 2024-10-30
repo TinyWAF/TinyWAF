@@ -1,0 +1,9 @@
+# Block requests that try to access common wordpress URLs.
+
+rules:
+  - id: wp-admin
+    priority: 0 # Higher number = lower priority
+    inspect: URL
+    operators:
+      - contains: "/wp-admin"
+    action: block
