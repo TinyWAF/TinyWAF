@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -30,7 +31,11 @@ func Start() error {
 			proxy := NewProxy(targetUrl)
 			mux := http.NewServeMux()
 
-			// @todo: custom responses for gateway errors (502/504)
+			// Return custom responses for gateway error
+			proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
+				log.Printf("Proxy error: %v", err.Error())
+				respondUnavailable(w)
+			}
 
 			// Register the healthcheck endpoint if set
 			if config.Listen.HealthcheckPath != "" {

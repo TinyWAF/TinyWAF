@@ -7,7 +7,7 @@ import (
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
 )
 
-func respondBadGateway(w http.ResponseWriter) {
+func respondUnavailable(w http.ResponseWriter) {
 	// @todo: if config custom HTML, load it and return that as the body
 	responseBody := getHtmlResponseBody(
 		http.StatusText(http.StatusServiceUnavailable),
