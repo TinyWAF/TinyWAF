@@ -3,17 +3,23 @@ package main
 import (
 	"log"
 
+	"github.com/TinyWAF/TinyWAF/internal/config"
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
 	"github.com/TinyWAF/TinyWAF/internal/webserver"
 )
 
 func main() {
-	// @todo: load tinywaf config
-	// @todo: load firewall rules
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load TinyWAF config: %v", err.Error())
+		return
+	}
 
-	// @todo: handle first-run (eg. create log files, data dir)
+	// @todo: set up log vars based on log levels defined in config
 
-	err := ruleengine.Init()
+	setupDirs(cfg)
+
+	err = ruleengine.Init(cfg)
 	if err != nil {
 		log.Fatalf("Failed to load TinyWAF rules: %v", err.Error())
 		return
@@ -21,9 +27,13 @@ func main() {
 
 	// @todo: do periodic cleanup of RuleEngine request memory
 
-	err = webserver.Start()
+	err = webserver.Start(cfg)
 	if err != nil {
 		log.Fatalf("Failed to start TinyWAF: %v", err.Error())
 		return
 	}
+}
+
+func setupDirs(config config.MainConfig) {
+	// @todo: create log dir based on path of `config.Log.Outfile`
 }

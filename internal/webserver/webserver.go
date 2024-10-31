@@ -9,12 +9,8 @@ import (
 	"github.com/TinyWAF/TinyWAF/internal/config"
 )
 
-func Start() error {
+func Start(config config.MainConfig) error {
 	// load configurations from config file
-	config, err := config.LoadConfig()
-	if err != nil {
-		return fmt.Errorf("could not load configuration: %v", err)
-	}
 
 	// Loop over listen IPs and create a server for each IP:port combination
 	for _, listenIp := range config.Listen.Ips {
