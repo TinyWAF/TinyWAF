@@ -2,6 +2,7 @@ listen:
   ips:
     - 127.0.0.1
   ports:
+    # Target is optional, if not defined target is the same as source
     - source: 8080
       target: 80
     # - source: 80
@@ -14,12 +15,11 @@ listen:
     # @todo: config for TLS/SSL certificate(s)
 
 upstream:
-  # Only one destination can be set. The port and path of the request will be
-  # copied from the original one.
+  # Only one destination can be set. The path of the request will be copied from
+  # the original one. The port is as defined in the listen ports array
   # The protocol (HTTP/HTTPS) is required (HTTP is recommended for same-machine,
   # HTTPS is recommended for dedicated machine)
   destination: http://localhost
-  # timeout:
 
 log:
   outfile: ./data/tinywaf.log # /var/log/tinywaf.log
@@ -43,7 +43,7 @@ html:
 #   unavailable: /var/tinywaf/html/503-unavailable.html
 
 # WIP config schema for including and disabling rules
-rules:
+ruleFiles:
   request:
     src:
       - /var/tinywaf/rules/default-managed/request-*.yaml

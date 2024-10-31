@@ -10,8 +10,8 @@ type MainConfig struct {
 	Listen struct {
 		Ips             []string     `validate:"required,gt=0"`
 		Ports           []ListenPort `validate:"required,gt=0"`
-		HealthcheckPath string
 		Websockets      bool
+		HealthcheckPath string
 		Tls             struct {
 			// @todo: TLS certificate config
 		}
@@ -19,16 +19,37 @@ type MainConfig struct {
 
 	Upstream struct {
 		Destination string `validate:"required"`
-		Timeout     uint
 	}
 
 	// @todo: validations
 	Log struct {
 		Outfile string `validate:"required"`
 		Levels  struct {
-			access bool
-			warn   bool
-			block  bool
+			Access bool
+			Warn   bool
+			Block  bool
+		}
+	}
+
+	RequestMemory struct {
+		MaxAgeMinutes int `validate:"required"`
+		MaxSize       int `validate:"required"`
+	}
+
+	Html struct {
+		Blocked     string
+		Ratelimit   string
+		Unavailable string
+	}
+
+	RuleFiles struct {
+		Request struct {
+			Src       []string
+			Overrides []RuleOverride
+		}
+		Response struct {
+			Src       []string
+			Overrides []RuleOverride
 		}
 	}
 }
@@ -36,6 +57,12 @@ type MainConfig struct {
 type ListenPort struct {
 	Source uint `validate:"required,gt=0"`
 	Target uint `validate:"gt=0"`
+}
+
+type RuleOverride struct {
+	Path   string
+	Rule   string
+	Action string
 }
 
 func LoadConfig() (MainConfig, error) {
