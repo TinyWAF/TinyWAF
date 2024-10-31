@@ -28,6 +28,12 @@ log:
     warn: true # Log warnings about suspicious activity
     block: true # Log when requests are blocked due to rules
 
+# Set how long TinyWAF should keep request history for. The lower the number
+# the lower the memory usage - but the lower chance of users hitting rate
+# limits or being blocked for enumeration attacks
+requestMemory:
+  maxAgeMinutes: 60
+
 # By default TinyWAF returns a basic HTML response if a request/response is not
 # handled (eg. it was blocked). To show custom (eg. branded) HTML pages to users
 # uncomment these lines:
