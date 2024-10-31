@@ -68,6 +68,7 @@ security settings (eg. with a set of rules enabled by detault).
 |**Ruleset**|**Status**|
 |:---|:---|
 | Port of OWASP CRS | :x: Not started |
+| Ban AI (block bots scraping data for AI/LLM training) | :x: Not started |
 | No Wordpress (for sites not running Wordpress) | :x: Not started |
 | No Drupal (for sites not running Drupal) | :x: Not started |
 | No Joomla (for sites not running Joomla) | :x: Not started |
