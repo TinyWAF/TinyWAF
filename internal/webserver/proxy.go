@@ -7,6 +7,8 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"time"
+
+	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
 )
 
 func NewProxy(target *url.URL) *httputil.ReverseProxy {
@@ -18,7 +20,17 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("[ TinyWAF ] Request received at %s at %s\n", r.URL, time.Now().UTC())
 
-		log.Println("Inbound request headers", r.Host)
+		ruleengine.RememberRequest(r)
+
+		inspection := ruleengine.InspectRequest(r)
+		if inspection.ShouldBlock {
+			respondBlocked(inspection, w)
+			return
+		}
+		if inspection.ShouldRateLimit {
+			respondRateLimited(inspection, w)
+			return
+		}
 
 		// @todo: check how this works with SSL
 		// Update the headers to allow for SSL redirection
@@ -27,24 +39,19 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 		// r.Header.Set("X-Forwarded-Host", r.Header.Get("Host"))
 		// r.Host = targetUrl.Host
 
-		log.Println("Request headers")
-		for k := range r.Header {
-			log.Println(k, r.Header.Get(k))
-		}
-
-		// @todo: run request firewall rules here (inc. rate limiting)
-		//
-		// @todo: if request fails firewall rules, use `w` to write failed response and return
-		// @todo: save rate limit data in memory but persist to DB periodically to survive restarts
-
+		// log.Println("Request headers")
+		// for k := range r.Header {
+		// 	log.Println(k, r.Header.Get(k))
+		// }
 		proxy.ModifyResponse = func(res *http.Response) error {
 			// @todo: run response rule analysis
 			return nil
 		}
 
+		// If we got this far, the request is allowed to continue upstream
 		fmt.Printf("[ TinyWAF ] Forwarding request to %s at %s\n", r.URL, time.Now().UTC())
 
-		// Note that ServeHttp is non blocking and uses a go routine under the hood
+		// Note that ServeHttp is non blocking and uses a goroutine under the hood
 		proxy.ServeHTTP(w, r)
 	}
 }
