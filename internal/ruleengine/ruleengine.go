@@ -8,6 +8,7 @@ var loadedRules *config.Rules
 func Init(cfg *config.MainConfig) error {
 	rules, err := config.LoadRules(cfg)
 	if err != nil {
+		// Most likely the rule config validation failed
 		return err
 	}
 
