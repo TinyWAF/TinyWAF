@@ -21,16 +21,33 @@ type RuleGroup struct {
 
 type Rule struct {
 	Id        string            `validate:"required"`
-	Inspect   []string          `validate:"required,gt=0"`
-	Operators map[string]string `validate:"required,gt=0"`
+	Inspect   []string          `validate:"required,gt=0,dive,oneof=url headers body"`
+	Fields    []string          `validate:"omitempty,gt=0"`
+	Operators map[string]string `validate:"required,gt=0,dive,keys,oneof=contains notcontains exactly notexactly regex notregex,endkeys"`
 	Ratelimit struct {
 		MaxAllowedRequests int `validate:"omitempty,gt=0"`
 		WithinMinutes      int `validate:"omitempty,gt=0"`
 	}
-	Action string `validate:"required"`
+	Action string `validate:"required,oneof=ignore warn block"`
 }
 
 var ErrNoFirewallRulesLoaded = errors.New("No firewall rules loaded")
+
+var RuleActionIgnore = "ignore"
+var RuleActionWarn = "warn"
+var RuleActionBlock = "block"
+
+var RuleInspectUrl = "url"
+var RuleInspectHeaders = "headers"
+var RuleInspectBody = "body"
+
+// contains notcontains exactly notexactly regex notregex
+var RuleOperatorContains = "contains"
+var RuleOperatorNotContains = "notcontains"
+var RuleOperatorExactly = "exactly"
+var RuleOperatorNotExactly = "notexactly"
+var RuleOperatorRegex = "regex"
+var RuleOperatorNotRegex = "notregex"
 
 func LoadRules(cfg *MainConfig) (Rules, error) {
 	return loadRules(viper.New(), cfg)
@@ -72,8 +89,6 @@ func loadRules(v *viper.Viper, cfg *MainConfig) (Rules, error) {
 		return rules, ErrNoFirewallRulesLoaded
 	}
 
-	log.Println(requestRuleGroups)
-
 	rules.RequestRules = requestRuleGroups
 
 	validate := validator.New(validator.WithRequiredStructEnabled())
@@ -81,6 +96,8 @@ func loadRules(v *viper.Viper, cfg *MainConfig) (Rules, error) {
 	if err != nil {
 		return rules, err
 	}
+
+	log.Println("Firewall rules loaded")
 
 	return rules, nil
 }
