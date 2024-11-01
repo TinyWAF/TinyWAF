@@ -1,9 +1,14 @@
 # Block requests that try to access common wordpress URLs.
 
+group: no-wordpress
 rules:
-  - id: wp-admin
-    priority: 0 # Higher number = lower priority
+  - id: url-wp-admin
     inspect: URL
     operators:
       - contains: "/wp-admin"
+    action: block
+  - id: url-wp-login
+    inspect: URL
+    operators:
+      - contains: "/wp-login"
     action: block
