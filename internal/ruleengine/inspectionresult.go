@@ -1,7 +1,9 @@
 package ruleengine
 
 type InspectionResult struct {
-	InspectionId    string
-	ShouldBlock     bool
-	ShouldRateLimit bool
+	InspectionId     string
+	TriggerdByRuleId string
+	RequestorIp      string
+	ShouldBlock      bool
+	ShouldRateLimit  bool
 }
