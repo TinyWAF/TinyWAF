@@ -1,0 +1,12 @@
+# Apply rate limits to stop users hitting pages constantly
+
+group: ratelimit
+rules:
+  - id: login
+    inspect: URL
+    operators:
+      - contains: "/wp-admin"
+    ratelimit:
+      maxAllowedRequests: 12
+      withinMinutes: 1
+    action: block
