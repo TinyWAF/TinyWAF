@@ -24,10 +24,24 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 
 		inspection := ruleengine.InspectRequest(r)
 		if inspection.ShouldBlock {
+			// @todo: log block info (depending on config)
+			log.Printf(
+				"BLOCKED request from IP '%v': rule '%v', InspectionID:'%v'",
+				inspection.RequestorIp,
+				inspection.TriggerdByRuleId,
+				inspection.InspectionId,
+			)
 			respondBlocked(inspection, w)
 			return
 		}
 		if inspection.ShouldRateLimit {
+			// @todo: log rate limit info (depending on config)
+			log.Printf(
+				"RATELIMITED request from IP '%v': rule '%v', InspectionID:'%v'",
+				inspection.RequestorIp,
+				inspection.TriggerdByRuleId,
+				inspection.InspectionId,
+			)
 			respondRateLimited(inspection, w)
 			return
 		}
