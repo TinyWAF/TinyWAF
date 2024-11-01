@@ -26,7 +26,7 @@ func respondBlocked(inspection ruleengine.InspectionResult, w http.ResponseWrite
 	// @todo: if config custom HTML, load it and return that as the body
 	responseBody := getHtmlResponseBody(
 		"Request blocked",
-		fmt.Sprintf("Request blocked! Inspection: %s", inspection.InspectionId),
+		fmt.Sprintf("Request blocked by firewall. InspectionID: %s", inspection.InspectionId),
 	)
 
 	w.WriteHeader(http.StatusForbidden)
@@ -37,7 +37,7 @@ func respondRateLimited(inspection ruleengine.InspectionResult, w http.ResponseW
 	// @todo: if config custom HTML, load it and return that as the body
 	responseBody := getHtmlResponseBody(
 		"Too many requests",
-		fmt.Sprintf("Too many requests - try again later. Inspection: %s", inspection.InspectionId),
+		fmt.Sprintf("Too many requests - try again later. InspectionID: %s", inspection.InspectionId),
 	)
 
 	w.WriteHeader(http.StatusTooManyRequests)
