@@ -26,7 +26,7 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 		if inspection.ShouldBlock {
 			// @todo: log block info (depending on config)
 			log.Printf(
-				"BLOCKED request from IP '%v': rule '%v', InspectionID:'%v'",
+				"BLOCKED request from IP '%v': rule '%v', inspection %v",
 				inspection.RequestorIp,
 				inspection.TriggerdByRuleId,
 				inspection.InspectionId,
@@ -37,7 +37,7 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 		if inspection.ShouldRateLimit {
 			// @todo: log rate limit info (depending on config)
 			log.Printf(
-				"RATELIMITED request from IP '%v': rule '%v', InspectionID:'%v'",
+				"RATELIMITED request from IP '%v': rule '%v', inspection %v",
 				inspection.RequestorIp,
 				inspection.TriggerdByRuleId,
 				inspection.InspectionId,
