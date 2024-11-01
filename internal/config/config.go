@@ -8,7 +8,7 @@ import (
 // @todo: check validation rules are correct
 type MainConfig struct {
 	Listen struct {
-		Ips             []string     `validate:"required,gt=0"`
+		Ips             []string     `validate:"required,gt=0,dive,ip"`
 		Ports           []ListenPort `validate:"required,gt=0"`
 		Websockets      bool
 		HealthcheckPath string
@@ -23,7 +23,7 @@ type MainConfig struct {
 
 	// @todo: validations
 	Log struct {
-		Outfile string `validate:"required"`
+		Outfile string `validate:"required,filepath"`
 		Levels  struct {
 			Access bool
 			Warn   bool
@@ -37,18 +37,18 @@ type MainConfig struct {
 	}
 
 	Html struct {
-		Blocked     string
-		Ratelimit   string
-		Unavailable string
+		Blocked     string `validate:"omitempty,filepath"`
+		Ratelimit   string `validate:"omitempty,filepath"`
+		Unavailable string `validate:"omitempty,filepath"`
 	}
 
 	RuleFiles struct {
 		Request struct {
-			Src       []string
+			Src       []string `validate:"dive,filepath"`
 			Overrides []RuleOverride
 		}
 		Response struct {
-			Src       []string
+			Src       []string `validate:"dive,filepath"`
 			Overrides []RuleOverride
 		}
 	}
@@ -56,7 +56,7 @@ type MainConfig struct {
 
 type ListenPort struct {
 	Source uint `validate:"required,gt=0"`
-	Target uint `validate:"gt=0"`
+	Target uint `validate:"omitempty,gt=0"`
 }
 
 type RuleOverride struct {
