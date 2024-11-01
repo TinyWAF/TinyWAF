@@ -19,7 +19,7 @@ func main() {
 
 	setupDirs(cfg)
 
-	err = ruleengine.Init(cfg)
+	err = ruleengine.Init(&cfg)
 	if err != nil {
 		log.Fatalf("Failed to load TinyWAF rules: %v", err.Error())
 		return
@@ -27,7 +27,7 @@ func main() {
 
 	// @todo: do periodic cleanup of RuleEngine request memory
 
-	err = webserver.Start(cfg)
+	err = webserver.Start(&cfg)
 	if err != nil {
 		log.Fatalf("Failed to start TinyWAF: %v", err.Error())
 		return

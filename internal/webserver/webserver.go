@@ -9,7 +9,7 @@ import (
 	"github.com/TinyWAF/TinyWAF/internal/config"
 )
 
-func Start(config config.MainConfig) error {
+func Start(config *config.MainConfig) error {
 	// load configurations from config file
 
 	// Loop over listen IPs and create a server for each IP:port combination
