@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/TinyWAF/TinyWAF/internal"
 	"github.com/TinyWAF/TinyWAF/internal/config"
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
 	"github.com/TinyWAF/TinyWAF/internal/webserver"
@@ -34,6 +35,6 @@ func main() {
 	}
 }
 
-func setupDirs(config config.MainConfig) {
+func setupDirs(config *internal.MainConfig) {
 	// @todo: create log dir based on path of `config.Log.Outfile`
 }

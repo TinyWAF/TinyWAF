@@ -5,6 +5,7 @@ import (
 	"log"
 	"path/filepath"
 
+	"github.com/TinyWAF/TinyWAF/internal"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 )
@@ -67,7 +68,7 @@ const RuleOperatorNotExactly string = "notexactly"
 const RuleOperatorRegex string = "regex"
 const RuleOperatorNotRegex string = "notregex"
 
-func LoadRules(cfg *MainConfig) (Rules, error) {
+func LoadRules(cfg *internal.MainConfig) (Rules, error) {
 	rules := Rules{}
 	requestRuleGroups := []RuleGroup{}
 	responseRuleGroups := []RuleGroup{}

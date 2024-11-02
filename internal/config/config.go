@@ -1,77 +1,18 @@
 package config
 
 import (
+	"log"
+
+	"github.com/TinyWAF/TinyWAF/internal"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 )
 
-// @todo: check validation rules are correct
-type MainConfig struct {
-	Listen struct {
-		Hosts           []ListenHost `validate:"required,gt=0"`
-		HealthcheckPath string
-
-		Upstream struct {
-			Destination string `validate:"required"`
-		}
-	}
-
-	Log struct {
-		File   string `validate:"omitempty,filepath"`
-		Levels struct {
-			Debug bool `validate:"boolean"`
-			Warn  bool `validate:"boolean"`
-			Block bool `validate:"boolean"`
-		}
-	}
-
-	RequestMemory struct {
-		Enabled       bool `validate:"boolean"`
-		MaxAgeMinutes int  `validate:"required"`
-		MaxSize       int  `validate:"required"`
-	}
-
-	Html struct {
-		Blocked     string `validate:"omitempty,file"`
-		Ratelimit   string `validate:"omitempty,file"`
-		Unavailable string `validate:"omitempty,file"`
-	}
-
-	RuleFiles struct {
-		WarnInsteadOfBlock bool
-		Request            struct {
-			Src       []string `validate:"dive,filepath"`
-			Overrides []RuleOverride
-		}
-		Response struct {
-			Src       []string `validate:"dive,filepath"`
-			Overrides []RuleOverride
-		}
-	}
-}
-
-type ListenHost struct {
-	Host         string `validate:"required,host_port"`
-	UpstreamPort uint   `validate:"omitempty,gt=0"`
-	Tls          struct {
-		CertificatePath string `validate:"omitempty,file"`
-		KeyPath         string `validate:"omitempty,file"`
-	}
-}
-
-type RuleOverride struct {
-	Path   string
-	Rule   string
-	Action string
-}
-
-func LoadConfig() (MainConfig, error) {
+func LoadConfig() (internal.MainConfig, error) {
 	return loadConfig(viper.New())
 }
 
-func loadConfig(v *viper.Viper) (MainConfig, error) {
-	// @todo: log which config files are loaded
-
+func loadConfig(v *viper.Viper) (internal.MainConfig, error) {
 	v.SetConfigType("yaml")
 	v.SetConfigName("tinywaf")       // file called tinywaf.yml|yaml
 	v.AddConfigPath("/etc/tinywaf/") // in this dir, or...
@@ -79,9 +20,12 @@ func loadConfig(v *viper.Viper) (MainConfig, error) {
 
 	err := v.ReadInConfig()
 	if err != nil {
-		return MainConfig{}, err
+		return internal.MainConfig{}, err
 	}
-	config := MainConfig{}
+
+	log.Printf("Loading config from '%v'...", v.ConfigFileUsed())
+
+	config := internal.MainConfig{}
 	err = v.Unmarshal(&config)
 	if err != nil {
 		return config, err
@@ -91,6 +35,8 @@ func loadConfig(v *viper.Viper) (MainConfig, error) {
 	if err := validate.Struct(config); err != nil {
 		return config, err
 	}
+
+	log.Println("Config loaded successfully")
 
 	return config, nil
 }

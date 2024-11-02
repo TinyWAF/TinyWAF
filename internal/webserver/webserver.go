@@ -7,12 +7,12 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/TinyWAF/TinyWAF/internal/config"
+	"github.com/TinyWAF/TinyWAF/internal"
 )
 
-var loadedCfg *config.MainConfig
+var loadedCfg *internal.MainConfig
 
-func Start(config *config.MainConfig) error {
+func Start(config *internal.MainConfig) error {
 	loadedCfg = config
 
 	for _, listenHost := range config.Listen.Hosts {
