@@ -94,6 +94,13 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 				}
 			}
 
+		case config.RuleInspectIp:
+			for operatorKey, operatorValue := range rule.Operators {
+				if runOperator(r.RemoteAddr, operatorKey, operatorValue) {
+					return true
+				}
+			}
+
 		case config.RuleInspectBody:
 		}
 	}

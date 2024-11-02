@@ -41,6 +41,7 @@ var RuleActionBlock = "block"
 var RuleInspectUrl = "url"
 var RuleInspectHeaders = "headers"
 var RuleInspectBody = "body"
+var RuleInspectIp = "ip"
 
 var RuleOperatorContains = "contains"
 var RuleOperatorNotContains = "notcontains"
