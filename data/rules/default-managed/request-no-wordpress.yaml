@@ -7,9 +7,9 @@ rules:
     inspect: URL
     operators:
       contains: "/wp-admin|/wp-login"
-    action: warn
+    action: block
   - id: url-wp-login
     inspect: URL
     operators:
       regex: /get\/\d+\/test
-    action: block
+    action: warn
