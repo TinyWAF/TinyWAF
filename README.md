@@ -49,13 +49,14 @@ security settings (eg. with a set of rules enabled by detault).
 
 |**Feature**|**Status**|
 |:---|:---|
-| :bangbang: Request interception and reverse proxy forwarding | :heavy_check_mark: Done |
+| :large_orange_diamond: Request interception and reverse proxy forwarding | :heavy_check_mark: Done |
 | Health check endpoint | :heavy_check_mark: Done |
-| :bangbang: Define rules in YAML | :heavy_check_mark: Done |
-| :bangbang: Request rule evaluation | :heavy_check_mark: Done |
-| :bangbang: HTTPS/TLS support | :construction: In progress |
+| :large_orange_diamond: Define rules in YAML | :heavy_check_mark: Done |
+| :large_orange_diamond: Request rule evaluation | :heavy_check_mark: Done |
+| :large_orange_diamond: HTTPS/TLS support | :construction: In progress |
 | Rate limiting | :construction: In progress |
 | :large_orange_diamond: Performance optimisation | :x: Not started |
+| :large_orange_diamond: Configurable log levels | :x: Not started |
 | :large_orange_diamond: Metrics/reporting | :x: Not started | <!-- aggregate telemetry for marketing site + reporting for TinyWAF Pro -->
 | Websocket forwarding | :x: Not started | <!-- https://github.com/koding/websocketproxy -->
 | Response rule evaluation | :x: Not started |
@@ -64,8 +65,7 @@ security settings (eg. with a set of rules enabled by detault).
 | CrowdSec integration | :x: Not started |
 
 Key
-* :bangbang: - Required for production use
-* :large_orange_diamond: - Next priority
+* :large_orange_diamond: - Required for 1.0 release
 
 ### TinyWAF default/maintained rulesets
 
