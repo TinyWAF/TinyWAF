@@ -51,8 +51,8 @@ security settings (eg. with a set of rules enabled by detault).
 |:---|:---|
 | Request interception and reverse proxy forwarding | :heavy_check_mark: Done |
 | Health check endpoint | :heavy_check_mark: Done |
-| Define rules in YAML | :construction: In progress |
-| Request rule evaluation | :construction: In progress |
+| Define rules in YAML | :heavy_check_mark: Done |
+| Request rule evaluation | :heavy_check_mark: Done |
 | Response rule evaluation | :construction: In progress |
 | Rate limiting | :x: Not started |
 | HTTPS/TLS support | :x: Not started |
