@@ -56,7 +56,8 @@ security settings (eg. with a set of rules enabled by detault).
 | :large_orange_diamond: HTTPS/TLS support | :heavy_check_mark: Done |
 | Rate limiting | :construction: In progress |
 | :large_orange_diamond: Performance optimisation | :x: Not started |
-| :large_orange_diamond: Configurable log levels | :x: Not started |
+| :large_orange_diamond: Add unit tests | :x: Not started |
+| :large_orange_diamond: Configurable log levels | :heavy_check_mark: Done |
 | :large_orange_diamond: Metrics/reporting | :x: Not started | <!-- aggregate telemetry for marketing site + reporting for TinyWAF Pro -->
 | Websocket forwarding | :x: Not started | <!-- https://github.com/koding/websocketproxy -->
 | Response rule evaluation | :x: Not started |
