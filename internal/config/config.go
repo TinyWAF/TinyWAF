@@ -43,7 +43,8 @@ type MainConfig struct {
 	}
 
 	RuleFiles struct {
-		Request struct {
+		WarnInsteadOfBlock bool
+		Request            struct {
 			Src       []string `validate:"dive,filepath"`
 			Overrides []RuleOverride
 		}

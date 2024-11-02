@@ -35,8 +35,8 @@ func InspectRequest(r *http.Request) InspectionResult {
 					InspectionId:     inspectionId,
 					TriggerdByRuleId: fmt.Sprintf("%s:%s", ruleGroup.Group, rule.Id),
 					RequestorIp:      r.RemoteAddr,
-					ShouldBlock:      rule.Action == config.RuleActionBlock,
-					ShouldWarn:       rule.Action == config.RuleActionWarn,
+					ShouldBlock:      rule.Action == config.RuleActionBlock && !loadedCfg.RuleFiles.WarnInsteadOfBlock,
+					ShouldWarn:       rule.Action == config.RuleActionWarn || loadedCfg.RuleFiles.WarnInsteadOfBlock,
 				}
 			}
 		}

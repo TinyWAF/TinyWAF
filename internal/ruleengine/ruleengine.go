@@ -3,6 +3,7 @@ package ruleengine
 import "github.com/TinyWAF/TinyWAF/internal/config"
 
 var loadedRules *config.Rules
+var loadedCfg *config.MainConfig
 
 // Start the rule engine. Load rules from files defined in config
 func Init(cfg *config.MainConfig) error {
@@ -12,6 +13,7 @@ func Init(cfg *config.MainConfig) error {
 		return err
 	}
 
+	loadedCfg = cfg
 	loadedRules = &rules
 
 	// @todo: implement a way to reload config without restarting app - like apache can
