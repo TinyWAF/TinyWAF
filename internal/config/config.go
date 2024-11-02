@@ -32,8 +32,9 @@ type MainConfig struct {
 	}
 
 	RequestMemory struct {
-		MaxAgeMinutes int `validate:"required"`
-		MaxSize       int `validate:"required"`
+		Enabled       bool `validate:"required"`
+		MaxAgeMinutes int  `validate:"required"`
+		MaxSize       int  `validate:"required"`
 	}
 
 	Html struct {

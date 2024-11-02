@@ -21,10 +21,6 @@ type InspectionResult struct {
 	ShouldWarn       bool
 }
 
-type Test struct {
-	Example []string
-}
-
 func InspectRequest(r *http.Request) InspectionResult {
 	inspectionId := generateInspectionId()
 
@@ -42,11 +38,13 @@ func InspectRequest(r *http.Request) InspectionResult {
 		}
 	}
 
-	// If we got this far the request is not blocked. Continue checking rate limits
-	_, ok := GetRememberedRequestsForIp(r.RemoteAddr)
-	if ok {
-		// @todo: apply rate limiting
-		// @todo: check for enumeration attack
+	if loadedCfg.RequestMemory.Enabled {
+		// If we got this far the request is not blocked. Continue checking rate limits if enabled
+		_, ok := GetRememberedRequestsForIp(r.RemoteAddr)
+		if ok {
+			// @todo: apply rate limiting
+			// @todo: check for enumeration attack
+		}
 	}
 
 	// Allow this request

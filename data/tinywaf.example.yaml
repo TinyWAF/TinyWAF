@@ -29,6 +29,8 @@ log:
     block: true # Log when requests are blocked due to rules
 
 requestMemory:
+  # Request memory is disabled by default because it consumes a lot of ram
+  enabled: false
   # How long we should keep request history for
   maxAgeMinutes: 15
   # How many requests per client IP should we keep within the maxAge
