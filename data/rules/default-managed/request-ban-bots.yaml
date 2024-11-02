@@ -1,0 +1,10 @@
+# Block requests from bots
+
+group: ban-bots
+rules:
+  - id: firefox-test
+    inspect: headers
+    fields: User-Agent
+    operators:
+      - contains: "firefox"
+    action: block
