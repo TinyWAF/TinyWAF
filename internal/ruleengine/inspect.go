@@ -69,7 +69,7 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 	log.Printf("Evaluating rule '%s:%s'...", ruleGroupName, rule.Id)
 
 	// If the method doesn't match, don't bother doing anything else
-	if len(rule.WhenMethods) == 0 || !slices.Contains(rule.WhenMethods, strings.ToLower(r.Method)) {
+	if len(rule.WhenMethods) > 0 && !slices.Contains(rule.WhenMethods, strings.ToLower(r.Method)) {
 		return false
 	}
 
