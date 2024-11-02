@@ -3,11 +3,15 @@
 group: no-wordpress
 rules:
   - id: url-wp-admin
+    whenMethods: post
     inspect: URL
     operators:
       - contains: "/wp-admin"
-    action: block
+    action: warn
   - id: url-wp-login
+    whenMethods:
+      - get
+      - post
     inspect: URL
     operators:
       - contains: "/wp-login"

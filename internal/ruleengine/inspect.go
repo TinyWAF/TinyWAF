@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/TinyWAF/TinyWAF/internal/config"
@@ -67,6 +68,11 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 
 	log.Printf("Evaluating rule '%s:%s'...", ruleGroupName, rule.Id)
 
+	// If the method doesn't match, don't bother doing anything else
+	if len(rule.WhenMethods) == 0 || !slices.Contains(rule.WhenMethods, strings.ToLower(r.Method)) {
+		return false
+	}
+
 	// Loop over the possible inspection values (eg. URL, headers, body)
 	for _, inspect := range rule.Inspect {
 		switch strings.ToLower(inspect) {
@@ -81,7 +87,6 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 		case config.RuleInspectHeaders:
 			for _, field := range rule.Fields {
 				header := r.Header.Get(field)
-
 				for operatorKey, operatorValue := range rule.Operators {
 					if runOperator(header, operatorKey, operatorValue) {
 						return true

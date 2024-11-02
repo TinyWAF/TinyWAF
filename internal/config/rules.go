@@ -20,11 +20,12 @@ type RuleGroup struct {
 }
 
 type Rule struct {
-	Id        string            `validate:"required"`
-	Inspect   []string          `validate:"required,gt=0,dive,oneof=url headers body"`
-	Fields    []string          `validate:"omitempty,gt=0"`
-	Operators map[string]string `validate:"required,gt=0,dive,keys,oneof=contains notcontains exactly notexactly regex notregex,endkeys"`
-	Ratelimit struct {
+	Id          string            `validate:"required"`
+	Inspect     []string          `validate:"required,gt=0,dive,oneof=url headers body ip"`
+	WhenMethods []string          `validate:"omitempty,gt=0"`
+	Fields      []string          `validate:"omitempty,gt=0"`
+	Operators   map[string]string `validate:"required,gt=0,dive,keys,oneof=contains notcontains exactly notexactly regex notregex,endkeys"`
+	Ratelimit   struct {
 		MaxAllowedRequests int `validate:"omitempty,gt=0"`
 		WithinMinutes      int `validate:"omitempty,gt=0"`
 	}
@@ -41,7 +42,6 @@ var RuleInspectUrl = "url"
 var RuleInspectHeaders = "headers"
 var RuleInspectBody = "body"
 
-// contains notcontains exactly notexactly regex notregex
 var RuleOperatorContains = "contains"
 var RuleOperatorNotContains = "notcontains"
 var RuleOperatorExactly = "exactly"
