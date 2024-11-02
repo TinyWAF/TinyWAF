@@ -44,9 +44,23 @@ func Start(config *config.MainConfig) error {
 			mux.HandleFunc("/", ProxyRequestHandler(proxy, targetUrl))
 
 			// Start the webserver for this IP and port combination
-			err := http.ListenAndServe(fmt.Sprintf("%v:%v", listenIp, portConfig.Source), mux)
+			var err error
+			if portConfig.Tls || portConfig.Source == 443 {
+				err = http.ListenAndServeTLS(
+					fmt.Sprintf("%v:%v", listenIp, portConfig.Source),
+					loadedCfg.Listen.Tls.CertificatePath,
+					loadedCfg.Listen.Tls.KeyPath,
+					mux,
+				)
+			} else {
+				err = http.ListenAndServe(
+					fmt.Sprintf("%v:%v", listenIp, portConfig.Source),
+					mux,
+				)
+			}
+
 			if err != nil {
-				return fmt.Errorf("could not start the server: %v", err)
+				return fmt.Errorf("Failed to start web server '%v:%v': %v", listenIp, portConfig.Source, err)
 			}
 		}
 	}

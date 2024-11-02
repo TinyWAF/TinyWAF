@@ -13,7 +13,8 @@ type MainConfig struct {
 		Websockets      bool
 		HealthcheckPath string
 		Tls             struct {
-			// @todo: TLS certificate config
+			CertificatePath string `validate:"omitempty,file"`
+			KeyPath         string `validate:"omitempty,file"`
 		}
 	}
 
@@ -32,15 +33,15 @@ type MainConfig struct {
 	}
 
 	RequestMemory struct {
-		Enabled       bool `validate:"required"`
+		Enabled       bool `validate:"boolean"`
 		MaxAgeMinutes int  `validate:"required"`
 		MaxSize       int  `validate:"required"`
 	}
 
 	Html struct {
-		Blocked     string `validate:"omitempty,filepath"`
-		Ratelimit   string `validate:"omitempty,filepath"`
-		Unavailable string `validate:"omitempty,filepath"`
+		Blocked     string `validate:"omitempty,file"`
+		Ratelimit   string `validate:"omitempty,file"`
+		Unavailable string `validate:"omitempty,file"`
 	}
 
 	RuleFiles struct {
@@ -59,6 +60,7 @@ type MainConfig struct {
 type ListenPort struct {
 	Source uint `validate:"required,gt=0"`
 	Target uint `validate:"omitempty,gt=0"`
+	Tls    bool `validate:"boolean"`
 }
 
 type RuleOverride struct {

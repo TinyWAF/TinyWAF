@@ -126,7 +126,6 @@ func runOperators(field string, operator config.Operators) bool {
 		parts := strings.Split(strings.ToLower(operator.Contains), "|")
 
 		for _, part := range parts {
-			log.Println(strings.Contains(field, part))
 			if strings.Contains(field, part) {
 				return true
 			}
