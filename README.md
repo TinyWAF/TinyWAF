@@ -79,31 +79,32 @@ security settings (eg. with a set of rules enabled by detault).
 
 <!-- @todo: move this whole section to docs site -->
 
-TinyWAF works similarly to the OWASP Core RuleSet. Rules are evaluated and an
-anomaly score is given to the request based on each evaluated rule. If the anomaly
-score is above a defined threshold, then the request is blocked.
+Rules are defined in YAML and stored in the TinyWAF config directory. TinyWAF
+ships with a set of default rules maintaned by the TinyWAF team, but users can
+also write their own rules and choose which ones to enable.
 
 Rules are run against requests to prevent SQL injection attacks, etc, but
 rules also run against responses to prevent information exposure (eg. leaking
 server file paths)
 
-Rules are defined in YAML and stored in the TinyWAF config directory. TinyWAF
-ships with a set of default rules maintaned by the TinyWAF team, but users can
-also write their own rules and choose which ones to enable.
+If a request or response matches a defined rule, an action is taken depening on
+the rule config. The request may be ignored, warned, ratelimited or blocked.
+
 
 ### Anatomy of a rule
 
-Rules are defined in yaml files. Each ruleset yaml file must start with either
-`request-` or `response-` followed by a hypenated rule group name.
+Rules are defined in yaml files. Each ruleset yaml file should start with either
+`request-` or `response-` followed by a hypenated rule group name. To disable a
+rule file, add `disabled-` at the start of the filename.
 
 Inside each group file is a `rules` array with the following YAML structure:
 
 * `id (string)` - A unique ID for the rule within this group (file)
-* `priority (int)` - [OPTIONAL] Rules are executed in priority order (0 first)
 * `inspect (string|string[])` - Which part of the request/response should this rule apply to
-* `fields (string|string[])` - [OPTIONAL] Which fields should this rule apply to
-* `operators (string[])` - An array of operators to be run
-* `action ('block'|'warn'|'none')` - What action to take if a request/response matches this rule
+* `whenMethods (string|string[])` - [OPTIONAL] Which request methods should this rule apply to. If not set, applies to all methods
+* `fields (string[])` - [OPTIONAL] Which header fields does this request apply to
+* `operators` - Which operators to run (contains, exactly, regex + inverse)
+* `action ('block'|'ratelimit'|'warn'|'ignore')` - What action to take if a request/response matches this rule
 
 Here's an example rule that will block any request/response with a non-numeric
 Content-Length header:
@@ -111,12 +112,24 @@ Content-Length header:
 ```
 rules:
   - id: content-length-not-numeric
-    inspect: HEADERS
+    inspect: headers
     fields: "Content-Length"
     operators:
-      - regex: ^\d+$
-    severity: 3
+      notregex: ^\d+$
     action: block
+```
+
+Here's an example rule that will log a warning about all GET requests to URLs
+containing `/signup` or `/login`:
+
+```
+rules:
+  - id: block-get-signup-login
+    whenMethods: get
+    inspect: url
+    operators:
+      contains: "/signup|/login"
+    action: warn
 ```
 
 ## Development quickstart
