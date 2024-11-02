@@ -5,6 +5,7 @@ import (
 
 	"github.com/TinyWAF/TinyWAF/internal"
 	"github.com/TinyWAF/TinyWAF/internal/config"
+	"github.com/TinyWAF/TinyWAF/internal/logger"
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
 	"github.com/TinyWAF/TinyWAF/internal/webserver"
 )
@@ -16,13 +17,12 @@ func main() {
 		return
 	}
 
-	// @todo: set up log vars based on log levels defined in config
-
-	setupDirs(cfg)
+	setupDirs(&cfg)
+	logger.Init(&cfg)
 
 	err = ruleengine.Init(&cfg)
 	if err != nil {
-		log.Fatalf("Failed to load TinyWAF rules: %v", err.Error())
+		logger.Fatal("Failed to load TinyWAF rules: %v", err.Error())
 		return
 	}
 
@@ -30,7 +30,7 @@ func main() {
 
 	err = webserver.Start(&cfg)
 	if err != nil {
-		log.Fatalf("Failed to start TinyWAF: %v", err.Error())
+		logger.Fatal("Failed to start TinyWAF: %v", err.Error())
 		return
 	}
 }

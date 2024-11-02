@@ -1,13 +1,11 @@
 package webserver
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"time"
 
+	"github.com/TinyWAF/TinyWAF/internal/logger"
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
 )
 
@@ -18,42 +16,45 @@ func NewProxy(target *url.URL) *httputil.ReverseProxy {
 
 func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("[ TinyWAF ] Request received at %s at %s\n", r.URL, time.Now().UTC())
+		inspectionId := ruleengine.GenerateInspectionId()
+
+		// Pass the inspection ID upstream and make it available for use in proxy error handler
+		r.Header.Add(wafInspectionIdHeaderName, inspectionId)
+
+		logger.Debug("%v :: Request access: %v from %v", inspectionId, r.URL, r.RemoteAddr)
 
 		if loadedCfg.RequestMemory.Enabled {
 			ruleengine.RememberRequest(r)
 		}
 
-		inspection := ruleengine.InspectRequest(r)
+		inspection := ruleengine.InspectRequest(r, inspectionId)
 		if inspection.ShouldBlock {
-			// @todo: log block info (depending on config)
-			log.Printf(
-				"BLOCKED request from IP '%v': rule '%v', inspection %v",
+			logger.Block(
+				"%v :: Denied request from IP '%v', rule '%v'",
+				inspection.InspectionId,
 				inspection.RequestorIp,
 				inspection.TriggerdByRuleId,
-				inspection.InspectionId,
 			)
 			respondBlocked(inspection, w)
 			return
 		}
 
 		if inspection.ShouldWarn {
-			// @todo: log block info (depending on config)
-			log.Printf(
-				"WARNING request matched rule but is allowed from IP '%v': rule '%v', inspection %v",
+			logger.Warn(
+				"%v :: Bypass denied request from IP '%v', rule '%v'",
+				inspection.InspectionId,
 				inspection.RequestorIp,
 				inspection.TriggerdByRuleId,
-				inspection.InspectionId,
 			)
 		}
 
 		if inspection.ShouldRateLimit {
 			// @todo: log rate limit info (depending on config)
-			log.Printf(
-				"RATELIMITED request from IP '%v': rule '%v', inspection %v",
+			logger.Block(
+				"%v :: RATELIMITED request from IP '%v', rule '%v'",
+				inspection.InspectionId,
 				inspection.RequestorIp,
 				inspection.TriggerdByRuleId,
-				inspection.InspectionId,
 			)
 			respondRateLimited(inspection, w)
 			return
@@ -74,7 +75,7 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 		}
 
 		// If we got this far, the request is allowed to continue upstream
-		fmt.Printf("[ TinyWAF ] Forwarding request to %s at %s\n", r.URL, time.Now().UTC())
+		logger.Debug("%v :: Pass request: %v from %v", inspectionId, r.URL, r.RemoteAddr)
 
 		// Note that ServeHttp is non blocking and uses a goroutine under the hood
 		proxy.ServeHTTP(w, r)

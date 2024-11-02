@@ -2,10 +2,10 @@ package config
 
 import (
 	"errors"
-	"log"
 	"path/filepath"
 
 	"github.com/TinyWAF/TinyWAF/internal"
+	"github.com/TinyWAF/TinyWAF/internal/logger"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 )
@@ -99,7 +99,7 @@ func LoadRules(cfg *internal.MainConfig) (Rules, error) {
 		return rules, err
 	}
 
-	log.Printf("Loaded %v rules successfully", numRulesLoaded)
+	logger.Info("Loaded %v rules successfully", numRulesLoaded)
 
 	return rules, nil
 }
@@ -111,12 +111,12 @@ func loadRulesFromGlob(globPattern string) ([]RuleGroup, int) {
 
 	ruleFilePaths, err := filepath.Glob(globPattern)
 	if err != nil {
-		log.Printf("ERROR: Failed to glob request rule files matching '%v', skipping: %v", globPattern, err.Error())
+		logger.Error("Failed to glob request rule files matching '%v', skipping: %v", globPattern, err.Error())
 		return loadedRuleGroups, numRulesLoaded
 	}
 
 	for _, filePath := range ruleFilePaths {
-		log.Printf("Loading ruleset from '%v'...", filePath)
+		logger.Info("Loading ruleset from '%v'...", filePath)
 
 		v.SetConfigFile(filePath)
 		v.MergeInConfig()
@@ -125,7 +125,7 @@ func loadRulesFromGlob(globPattern string) ([]RuleGroup, int) {
 		err := v.Unmarshal(&rulesForFile)
 		if err != nil {
 			// Unable to parse yaml file
-			log.Printf("ERROR: Failed to parse yaml in rule file '%v', skipping: %v", filePath, err.Error())
+			logger.Error("Failed to parse yaml in rule file '%v', skipping: %v", filePath, err.Error())
 			continue
 		}
 

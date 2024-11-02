@@ -2,12 +2,12 @@ package webserver
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
 
 	"github.com/TinyWAF/TinyWAF/internal"
+	"github.com/TinyWAF/TinyWAF/internal/logger"
 )
 
 var loadedCfg *internal.MainConfig
@@ -23,13 +23,13 @@ func Start(config *internal.MainConfig) error {
 			// If the upsttream port isn't set, use the same as the source port
 			parsedListenHost, err := url.ParseRequestURI(listenHost.Host)
 			if err != nil {
-				log.Printf("Failed to parse listen host '%v', skipping: %v", listenHost.Host, err.Error())
+				logger.Error("Failed to parse listen host '%v', skipping: %v", listenHost.Host, err.Error())
 				continue
 			}
 
 			i64, err := strconv.ParseUint(parsedListenHost.Port(), 10, 0)
 			if err != nil {
-				log.Printf("Failed to parse port from listen host '%v', skipping: %v", listenHost.Host, err.Error())
+				logger.Error("Failed to parse port from listen host '%v', skipping: %v", listenHost.Host, err.Error())
 				continue
 			}
 			targetPort = uint(i64)
@@ -43,7 +43,8 @@ func Start(config *internal.MainConfig) error {
 
 		// Return custom responses for gateway error
 		proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
-			log.Printf("Proxy error: %v", err.Error())
+			inspectionId := r.Header.Get(wafInspectionIdHeaderName)
+			logger.Error("%v :: Proxy error from upstream: %v", inspectionId, err.Error())
 			respondUnavailable(w)
 		}
 

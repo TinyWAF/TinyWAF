@@ -2,7 +2,6 @@ package ruleengine
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"regexp"
@@ -10,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/TinyWAF/TinyWAF/internal/config"
+	"github.com/TinyWAF/TinyWAF/internal/logger"
 )
 
 type InspectionResult struct {
@@ -21,12 +21,10 @@ type InspectionResult struct {
 	ShouldWarn       bool
 }
 
-func InspectRequest(r *http.Request) InspectionResult {
-	inspectionId := generateInspectionId()
-
+func InspectRequest(r *http.Request, inspectionId string) InspectionResult {
 	for _, ruleGroup := range loadedRules.RequestRules {
 		for _, rule := range ruleGroup.Rules {
-			if matchesRule(r, ruleGroup.Group, rule) {
+			if matchesRule(r, ruleGroup.Group, rule, inspectionId) {
 				return InspectionResult{
 					InspectionId:     inspectionId,
 					TriggerdByRuleId: fmt.Sprintf("%s:%s", ruleGroup.Group, rule.Id),
@@ -56,14 +54,15 @@ func InspectRequest(r *http.Request) InspectionResult {
 	}
 }
 
-func InspectResponse(r *http.Request) InspectionResult {
+func InspectResponse(r *http.Request, inspectionId string) InspectionResult {
 
 	// @todo
 	return InspectionResult{}
 }
 
-func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
-	log.Printf("Evaluating rule '%s:%s'...", ruleGroupName, rule.Id)
+func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule, inspectionId string) bool {
+	fqRuleName := fmt.Sprintf("%s:%s", ruleGroupName, rule.Id)
+	logger.Debug("%v :: Evaluating rule '%s'...", inspectionId, fqRuleName)
 
 	// If the method doesn't match, don't bother doing anything else
 	if len(rule.WhenMethods) > 0 && !slices.Contains(rule.WhenMethods, strings.ToLower(r.Method)) {
@@ -74,14 +73,14 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 	for _, inspect := range rule.Inspect {
 		switch inspect {
 		case config.RuleInspectUrl:
-			if runOperators(r.RequestURI, rule.Operators) {
+			if runOperators(r.RequestURI, rule.Operators, fqRuleName, inspectionId) {
 				return true
 			}
 
 		case config.RuleInspectHeaders:
 			for _, field := range rule.Fields {
 				header := r.Header.Get(field)
-				if runOperators(header, rule.Operators) {
+				if runOperators(header, rule.Operators, fqRuleName, inspectionId) {
 					return true
 				}
 			}
@@ -97,7 +96,7 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 		// 	}
 
 		case config.RuleInspectIp:
-			if runOperators(r.RemoteAddr, rule.Operators) {
+			if runOperators(r.RemoteAddr, rule.Operators, fqRuleName, inspectionId) {
 				return true
 			}
 
@@ -105,12 +104,12 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 			body := []byte{}
 			_, err := r.Body.Read(body)
 			if err != nil {
-				log.Printf("Failed to read request body: %v", err.Error())
+				logger.Debug("%v :: Failed to read request body: %v", inspectionId, err.Error())
 				return false
 			}
 
 			// @todo: allow checking specific request fields - how? json object dot notation?
-			if runOperators(string(body), rule.Operators) {
+			if runOperators(string(body), rule.Operators, fqRuleName, inspectionId) {
 				return true
 			}
 		}
@@ -119,7 +118,7 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 	return false
 }
 
-func runOperators(field string, operator config.Operators) bool {
+func runOperators(field string, operator config.Operators, fqRuleName string, inspectionId string) bool {
 	field = strings.ToLower(field)
 
 	if operator.Contains != "" {
@@ -154,7 +153,7 @@ func runOperators(field string, operator config.Operators) bool {
 	if operator.Regex != "" {
 		matched, err := regexp.Match(operator.Regex, []byte(field))
 		if err != nil {
-			log.Printf("Failed to parse regex: %v", err.Error())
+			logger.Error("%s :: Failed to parse regex in rule '%s': %s", inspectionId, fqRuleName, err.Error())
 		}
 		return matched
 	}
@@ -162,16 +161,16 @@ func runOperators(field string, operator config.Operators) bool {
 	if operator.NotRegex != "" {
 		matched, err := regexp.Match(operator.NotRegex, []byte(field))
 		if err != nil {
-			log.Printf("Failed to parse regex: %v", err.Error())
+			logger.Error("%s :: Failed to parse regex in rule '%s': %s", inspectionId, fqRuleName, err.Error())
 		}
 		return !matched
 	}
 
-	log.Println("Rule has no operators!")
+	logger.Error("%s :: Rule '%s' has no operators!", inspectionId, fqRuleName)
 	return false
 }
 
-func generateInspectionId() string {
+func GenerateInspectionId() string {
 	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 	b := make([]byte, 16)
