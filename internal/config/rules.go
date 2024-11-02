@@ -49,23 +49,23 @@ type Operators struct {
 
 var ErrNoFirewallRulesLoaded = errors.New("No firewall rules loaded")
 
-var RuleActionIgnore = "ignore"
-var RuleActionWarn = "warn"
-var RuleActionRatelimit = "ratelimit"
-var RuleActionBlock = "block"
+const RuleActionIgnore string = "ignore"
+const RuleActionWarn string = "warn"
+const RuleActionRatelimit string = "ratelimit"
+const RuleActionBlock string = "block"
 
-// Other ideas to add: cookies
-var RuleInspectUrl = "url"
-var RuleInspectHeaders = "headers"
-var RuleInspectBody = "body"
-var RuleInspectIp = "ip"
+const RuleInspectUrl string = "url"
+const RuleInspectHeaders string = "headers"
+const RuleInspectCookies string = "cookies"
+const RuleInspectBody string = "body"
+const RuleInspectIp string = "ip"
 
-var RuleOperatorContains = "contains"
-var RuleOperatorNotContains = "notcontains"
-var RuleOperatorExactly = "exactly"
-var RuleOperatorNotExactly = "notexactly"
-var RuleOperatorRegex = "regex"
-var RuleOperatorNotRegex = "notregex"
+const RuleOperatorContains string = "contains"
+const RuleOperatorNotContains string = "notcontains"
+const RuleOperatorExactly string = "exactly"
+const RuleOperatorNotExactly string = "notexactly"
+const RuleOperatorRegex string = "regex"
+const RuleOperatorNotRegex string = "notregex"
 
 func LoadRules(cfg *MainConfig) (Rules, error) {
 	rules := Rules{}

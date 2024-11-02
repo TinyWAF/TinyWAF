@@ -7,6 +7,8 @@ import (
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
 )
 
+const wafInspectionIdHeaderName string = "X-WAF-InspectionID"
+
 func respondUnavailable(w http.ResponseWriter) {
 	// @todo: if config custom HTML, load it and return that as the body
 	responseBody := getHtmlResponseBody(
@@ -29,7 +31,7 @@ func respondBlocked(inspection ruleengine.InspectionResult, w http.ResponseWrite
 		"Request blocked by firewall",
 	)
 
-	w.Header().Add("X-TinyWAF-Inspectionid", inspection.InspectionId)
+	w.Header().Add(wafInspectionIdHeaderName, inspection.InspectionId)
 	w.WriteHeader(http.StatusForbidden)
 	fmt.Fprint(w, responseBody)
 }
@@ -41,7 +43,7 @@ func respondRateLimited(inspection ruleengine.InspectionResult, w http.ResponseW
 		"Too many requests - try again later.",
 	)
 
-	w.Header().Add("X-TinyWAF-Inspectionid", inspection.InspectionId)
+	w.Header().Add(wafInspectionIdHeaderName, inspection.InspectionId)
 	w.WriteHeader(http.StatusTooManyRequests)
 	fmt.Fprint(w, responseBody)
 }
