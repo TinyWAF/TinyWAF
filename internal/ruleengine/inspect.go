@@ -16,6 +16,7 @@ type InspectionResult struct {
 	RequestorIp      string
 	ShouldBlock      bool
 	ShouldRateLimit  bool
+	ShouldWarn       bool
 }
 
 type Test struct {
@@ -27,14 +28,13 @@ func InspectRequest(r *http.Request) InspectionResult {
 
 	for _, ruleGroup := range loadedRules.RequestRules {
 		for _, rule := range ruleGroup.Rules {
-			if matchesRule(r, rule) && rule.Action == config.RuleActionBlock {
-				// @todo: log warning if rule.action is warn
-
+			if matchesRule(r, ruleGroup.Group, rule) {
 				return InspectionResult{
 					InspectionId:     inspectionId,
 					TriggerdByRuleId: fmt.Sprintf("%s:%s", ruleGroup.Group, rule.Id),
 					RequestorIp:      r.RemoteAddr,
-					ShouldBlock:      true,
+					ShouldBlock:      rule.Action == config.RuleActionBlock,
+					ShouldWarn:       rule.Action == config.RuleActionWarn,
 				}
 			}
 		}
@@ -62,10 +62,10 @@ func InspectResponse(r *http.Request) InspectionResult {
 	return InspectionResult{}
 }
 
-func matchesRule(r *http.Request, rule config.Rule) bool {
+func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 	match := false
 
-	log.Printf("Evaluating rule %s", rule.Id)
+	log.Printf("Evaluating rule '%s:%s'...", ruleGroupName, rule.Id)
 
 	// Loop over the possible inspection values (eg. URL, headers, body)
 	for _, inspect := range rule.Inspect {
@@ -79,6 +79,15 @@ func matchesRule(r *http.Request, rule config.Rule) bool {
 			}
 
 		case config.RuleInspectHeaders:
+			for _, field := range rule.Fields {
+				header := r.Header.Get(field)
+
+				for operatorKey, operatorValue := range rule.Operators {
+					if runOperator(header, operatorKey, operatorValue) {
+						return true
+					}
+				}
+			}
 
 		case config.RuleInspectBody:
 		}
@@ -88,15 +97,22 @@ func matchesRule(r *http.Request, rule config.Rule) bool {
 }
 
 func runOperator(field string, operatorKey string, operatorValue string) bool {
-	switch strings.ToLower(operatorKey) {
+	field = strings.ToLower(field)
+	operatorKey = strings.ToLower(operatorKey)
+	operatorValue = strings.ToLower(operatorValue)
+
+	switch operatorKey {
 	case config.RuleOperatorContains:
 		return strings.Contains(field, operatorValue)
 
 	case config.RuleOperatorNotContains:
+		return !strings.Contains(field, operatorValue)
 
 	case config.RuleOperatorExactly:
+		return field == operatorValue
 
 	case config.RuleOperatorNotExactly:
+		return field != operatorValue
 
 	case config.RuleOperatorRegex:
 
