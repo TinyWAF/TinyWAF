@@ -54,22 +54,22 @@ func LoadRules(cfg *MainConfig) (Rules, error) {
 }
 
 func loadRules(v *viper.Viper, cfg *MainConfig) (Rules, error) {
-	for i := range cfg.RuleFiles.Request.Src {
-		ruleFilePaths, err := filepath.Glob(cfg.RuleFiles.Request.Src[i])
+	for _, globPattern := range cfg.RuleFiles.Request.Src {
+		ruleFilePaths, err := filepath.Glob(globPattern)
 		if err != nil {
-			log.Printf("ERROR: Failed to glob request rule files matching '%v', skipping: %v", cfg.RuleFiles.Request.Src[i], err.Error())
+			log.Printf("ERROR: Failed to glob request rule files matching '%v', skipping: %v", globPattern, err.Error())
 			continue
 		}
 
-		for j := range ruleFilePaths {
-			v.SetConfigFile(ruleFilePaths[i])
+		for _, filePath := range ruleFilePaths {
+			v.SetConfigFile(filePath)
 
-			log.Printf("Loading ruleset from '%v'...", ruleFilePaths[i])
+			log.Printf("Loading ruleset from '%v'...", filePath)
 
 			err := v.MergeInConfig()
 			if err != nil {
 				// Probably failed to read in the file
-				log.Printf("ERROR: Failed to load rule file '%v', skipping: %v", ruleFilePaths[j], err.Error())
+				log.Printf("ERROR: Failed to load rule file '%v', skipping: %v", filePath, err.Error())
 				continue
 			}
 		}
