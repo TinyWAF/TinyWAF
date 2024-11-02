@@ -34,6 +34,17 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 			respondBlocked(inspection, w)
 			return
 		}
+
+		if inspection.ShouldWarn {
+			// @todo: log block info (depending on config)
+			log.Printf(
+				"WARNING request matched rule but is allowed from IP '%v': rule '%v', inspection %v",
+				inspection.RequestorIp,
+				inspection.TriggerdByRuleId,
+				inspection.InspectionId,
+			)
+		}
+
 		if inspection.ShouldRateLimit {
 			// @todo: log rate limit info (depending on config)
 			log.Printf(
