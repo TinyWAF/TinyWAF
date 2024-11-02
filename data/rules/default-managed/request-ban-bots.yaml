@@ -2,9 +2,9 @@
 
 group: ban-bots
 rules:
-  - id: firefox-test
+  - id: ban-safari
     inspect: headers
     fields: User-Agent
     operators:
-      - contains: "firefox"
+      contains: "safari"
     action: block
