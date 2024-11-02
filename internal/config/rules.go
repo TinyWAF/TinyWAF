@@ -21,9 +21,9 @@ type RuleGroup struct {
 
 type Rule struct {
 	Id          string    `validate:"required"`
-	Inspect     []string  `validate:"required,gt=0,unique,oneof=url headers body ip"`
+	Inspect     []string  `validate:"required,gt=0,unique,oneof=url headers body ip"` // @todo: add cookies
 	WhenMethods []string  `validate:"omitempty,gt=0,unique,dive,containsany=lowercase"`
-	Fields      []string  `validate:"omitempty,gt=0,unique"`
+	Fields      []string  `validate:"omitempty,gt=0,unique"` // @todo: require when inspect is headers or cookies
 	Operators   Operators `validate:"required"`
 	Ratelimit   struct {
 		MaxAllowedRequests int `validate:"omitempty,gt=0"`

@@ -88,6 +88,16 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 				}
 			}
 
+		// @todo: figure out how to make this work nicely
+		// @todo: marshal the cookies array to json to apply operators?
+		// case config.RuleInspectCookies:
+		// 	for _, field := range rule.Fields {
+		// 		cookies := r.Cookies()
+		// 		if runOperators(cookie, rule.Operators) {
+		// 			return true
+		// 		}
+		// 	}
+
 		case config.RuleInspectIp:
 			if runOperators(r.RemoteAddr, rule.Operators) {
 				return true
