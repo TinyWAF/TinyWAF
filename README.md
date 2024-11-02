@@ -53,7 +53,7 @@ security settings (eg. with a set of rules enabled by detault).
 | Health check endpoint | :heavy_check_mark: Done |
 | :large_orange_diamond: Define rules in YAML | :heavy_check_mark: Done |
 | :large_orange_diamond: Request rule evaluation | :heavy_check_mark: Done |
-| :large_orange_diamond: HTTPS/TLS support | :construction: In progress |
+| :large_orange_diamond: HTTPS/TLS support | :heavy_check_mark: Done |
 | Rate limiting | :construction: In progress |
 | :large_orange_diamond: Performance optimisation | :x: Not started |
 | :large_orange_diamond: Configurable log levels | :x: Not started |
