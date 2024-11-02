@@ -1,25 +1,19 @@
 listen:
-  ips:
-    - 127.0.0.1
-  ports:
-    # Target is optional, if not defined target is the same as source
-    - source: 8080
-      target: 80
-    # - source: 80
-    # - source: 443
-  # By default websocket connections are proxied to the destination
-  websockets: true
+  hosts:
+    - host: localhost:443
+      # upstreamPort is optional, if not defined the upstream port is taken from the hostname above
+      upstreamPort: 80
+      tls:
+        certificatePath: "./data/tls/localhost.crt"
+        keyPath: "./data/tls/localhost.key"
   # Set healthcheck to "" to disable it
   healthcheckPath: "/healthcheck"
-  tls:
-    # @todo: config for TLS/SSL certificate(s)
-
-upstream:
-  # Only one destination can be set. The path of the request will be copied from
-  # the original one. The port is as defined in the listen ports array
-  # The protocol (HTTP/HTTPS) is required (HTTP is recommended for same-machine,
-  # HTTPS is recommended for dedicated machine)
-  destination: http://localhost
+  upstream:
+    # Only one destination server can be set. The hostname, port and path of the
+    # request will be copied from the original one.
+    # The protocol (HTTP/HTTPS) is required (HTTP is recommended for same-machine,
+    # HTTPS is recommended for separate machine)
+    destination: http://localhost
 
 log:
   outfile: ./data/tinywaf.log # /var/log/tinywaf.log

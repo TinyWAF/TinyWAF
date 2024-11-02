@@ -8,18 +8,12 @@ import (
 // @todo: check validation rules are correct
 type MainConfig struct {
 	Listen struct {
-		Ips             []string     `validate:"required,gt=0,dive,ip"`
-		Ports           []ListenPort `validate:"required,gt=0"`
-		Websockets      bool
+		Hosts           []ListenHost `validate:"required,gt=0"`
 		HealthcheckPath string
-		Tls             struct {
-			CertificatePath string `validate:"omitempty,file"`
-			KeyPath         string `validate:"omitempty,file"`
-		}
-	}
 
-	Upstream struct {
-		Destination string `validate:"required"`
+		Upstream struct {
+			Destination string `validate:"required"`
+		}
 	}
 
 	// @todo: validations
@@ -57,10 +51,13 @@ type MainConfig struct {
 	}
 }
 
-type ListenPort struct {
-	Source uint `validate:"required,gt=0"`
-	Target uint `validate:"omitempty,gt=0"`
-	Tls    bool `validate:"boolean"`
+type ListenHost struct {
+	Host         string `validate:"required,host_port"`
+	UpstreamPort uint   `validate:"omitempty,gt=0"`
+	Tls          struct {
+		CertificatePath string `validate:"omitempty,file"`
+		KeyPath         string `validate:"omitempty,file"`
+	}
 }
 
 type RuleOverride struct {
