@@ -50,54 +50,69 @@ var RuleOperatorRegex = "regex"
 var RuleOperatorNotRegex = "notregex"
 
 func LoadRules(cfg *MainConfig) (Rules, error) {
-	return loadRules(viper.New(), cfg)
-}
-
-func loadRules(v *viper.Viper, cfg *MainConfig) (Rules, error) {
-	for _, globPattern := range cfg.RuleFiles.Request.Src {
-		ruleFilePaths, err := filepath.Glob(globPattern)
-		if err != nil {
-			log.Printf("ERROR: Failed to glob request rule files matching '%v', skipping: %v", globPattern, err.Error())
-			continue
-		}
-
-		for _, filePath := range ruleFilePaths {
-			v.SetConfigFile(filePath)
-
-			log.Printf("Loading ruleset from '%v'...", filePath)
-
-			err := v.MergeInConfig()
-			if err != nil {
-				// Probably failed to read in the file
-				log.Printf("ERROR: Failed to load rule file '%v', skipping: %v", filePath, err.Error())
-				continue
-			}
-		}
-	}
-
-	// @todo: load in response rules
-
 	rules := Rules{}
-
 	requestRuleGroups := []RuleGroup{}
-	err := v.Unmarshal(&requestRuleGroups)
-	if err != nil {
-		return rules, err
+	responseRuleGroups := []RuleGroup{}
+	numRulesLoaded := 0
+
+	for _, globPattern := range cfg.RuleFiles.Request.Src {
+		rules, numLoaded := loadRulesFromGlob(globPattern)
+		requestRuleGroups = append(requestRuleGroups, rules...)
+		numRulesLoaded += numLoaded
 	}
 
-	if len(requestRuleGroups) == 0 || (len(requestRuleGroups) == 1 && len(requestRuleGroups[0].Rules) == 0) {
+	for _, globPattern := range cfg.RuleFiles.Response.Src {
+		rules, numLoaded := loadRulesFromGlob(globPattern)
+		responseRuleGroups = append(responseRuleGroups, rules...)
+		numRulesLoaded += numLoaded
+	}
+
+	if numRulesLoaded == 0 {
 		return rules, ErrNoFirewallRulesLoaded
 	}
 
 	rules.RequestRules = requestRuleGroups
+	rules.ResponseRules = responseRuleGroups
 
 	validate := validator.New(validator.WithRequiredStructEnabled())
-	err = validate.Struct(rules)
+	err := validate.Struct(rules)
 	if err != nil {
 		return rules, err
 	}
 
-	log.Println("Firewall rules loaded")
+	log.Printf("Loaded %v rules successfully", numRulesLoaded)
 
 	return rules, nil
+}
+
+func loadRulesFromGlob(globPattern string) ([]RuleGroup, int) {
+	v := viper.New()
+	loadedRuleGroups := []RuleGroup{}
+	numRulesLoaded := 0
+
+	ruleFilePaths, err := filepath.Glob(globPattern)
+	if err != nil {
+		log.Printf("ERROR: Failed to glob request rule files matching '%v', skipping: %v", globPattern, err.Error())
+		return loadedRuleGroups, numRulesLoaded
+	}
+
+	for _, filePath := range ruleFilePaths {
+		log.Printf("Loading ruleset from '%v'...", filePath)
+
+		v.SetConfigFile(filePath)
+		v.MergeInConfig()
+
+		rulesForFile := RuleGroup{}
+		err := v.Unmarshal(&rulesForFile)
+		if err != nil {
+			// Unable to parse yaml file
+			log.Printf("ERROR: Failed to parse yaml in rule file '%v', skipping: %v", filePath, err.Error())
+			continue
+		}
+
+		numRulesLoaded += len(rulesForFile.Rules)
+		loadedRuleGroups = append(loadedRuleGroups, rulesForFile)
+	}
+
+	return loadedRuleGroups, numRulesLoaded
 }
