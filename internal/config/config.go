@@ -17,7 +17,7 @@ type MainConfig struct {
 	}
 
 	Log struct {
-		File   string `validate:"required,filepath"`
+		File   string `validate:"omitempty,filepath"`
 		Levels struct {
 			Debug bool `validate:"boolean"`
 			Warn  bool `validate:"boolean"`
