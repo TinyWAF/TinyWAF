@@ -49,19 +49,23 @@ security settings (eg. with a set of rules enabled by detault).
 
 |**Feature**|**Status**|
 |:---|:---|
-| Request interception and reverse proxy forwarding | :heavy_check_mark: Done |
+| :bangbang: Request interception and reverse proxy forwarding | :heavy_check_mark: Done |
 | Health check endpoint | :heavy_check_mark: Done |
-| Define rules in YAML | :heavy_check_mark: Done |
-| Request rule evaluation | :heavy_check_mark: Done |
-| Response rule evaluation | :construction: In progress |
-| Rate limiting | :x: Not started |
-| HTTPS/TLS support | :x: Not started |
-| Websocket forwarding | :x: Not started |
-| Metrics/reporting | :x: Not started |
+| :bangbang: Define rules in YAML | :heavy_check_mark: Done |
+| :bangbang: Request rule evaluation | :heavy_check_mark: Done |
+| :bangbang: HTTPS/TLS support | :construction: In progress |
+| Rate limiting | :construction: In progress |
+| :large_orange_diamond: Performance optimisation | :x: Not started |
+| :large_orange_diamond: Metrics/reporting | :x: Not started | <!-- aggregate telemetry for marketing site + reporting for TinyWAF Pro -->
+| Websocket forwarding | :x: Not started | <!-- https://github.com/koding/websocketproxy -->
+| Response rule evaluation | :x: Not started |
 | Custom error pages | :x: Not started |
 | AbuseIPDB integration | :x: Not started |
 | CrowdSec integration | :x: Not started |
 
+Key
+* :bangbang: - Required for production use
+* :large_orange_diamond: - Next priority
 
 ### TinyWAF default/maintained rulesets
 
@@ -140,6 +144,6 @@ Download the go runtime, clone the repo to your machine, then open a terminal to
 the root of the repo and run `go run ./cmd` to launch TinyWAF.
 
 
-## Hosting quickstart
+## TinyWAF installation
 
 Consult [the docs](https://tinywaf.com/docs/) to set up TinyWAF on your server.
