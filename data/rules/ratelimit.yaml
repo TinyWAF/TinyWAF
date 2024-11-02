@@ -3,7 +3,7 @@
 group: ratelimit
 rules:
   - id: login
-    inspect: URL
+    inspect: url
     operators:
       - contains: "/wp-admin"
     ratelimit:

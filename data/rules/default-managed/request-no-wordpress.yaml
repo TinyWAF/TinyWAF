@@ -4,12 +4,12 @@ group: no-wordpress
 rules:
   - id: url-wp-admin
     whenMethods: get
-    inspect: URL
+    inspect: url
     operators:
       contains: "/wp-admin|/wp-login"
     action: block
   - id: url-wp-login
-    inspect: URL
+    inspect: url
     operators:
       regex: /get\/\d+\/test
     action: warn
