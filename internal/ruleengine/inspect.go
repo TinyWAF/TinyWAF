@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -64,8 +65,6 @@ func InspectResponse(r *http.Request) InspectionResult {
 }
 
 func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
-	match := false
-
 	log.Printf("Evaluating rule '%s:%s'...", ruleGroupName, rule.Id)
 
 	// If the method doesn't match, don't bother doing anything else
@@ -77,61 +76,91 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 	for _, inspect := range rule.Inspect {
 		switch strings.ToLower(inspect) {
 		case config.RuleInspectUrl:
-			// Loop over the operators to run for this rule
-			for operatorKey, operatorValue := range rule.Operators {
-				if runOperator(r.URL.String(), operatorKey, operatorValue) {
-					return true
-				}
+			if runOperators(r.RequestURI, rule.Operators) {
+				return true
 			}
 
 		case config.RuleInspectHeaders:
 			for _, field := range rule.Fields {
 				header := r.Header.Get(field)
-				for operatorKey, operatorValue := range rule.Operators {
-					if runOperator(header, operatorKey, operatorValue) {
-						return true
-					}
-				}
-			}
-
-		case config.RuleInspectIp:
-			for operatorKey, operatorValue := range rule.Operators {
-				if runOperator(r.RemoteAddr, operatorKey, operatorValue) {
+				if runOperators(header, rule.Operators) {
 					return true
 				}
 			}
 
+		case config.RuleInspectIp:
+			if runOperators(r.RemoteAddr, rule.Operators) {
+				return true
+			}
+
 		case config.RuleInspectBody:
+			body := []byte{}
+			_, err := r.Body.Read(body)
+			if err != nil {
+				log.Printf("Failed to read request body: %v", err.Error())
+				return false
+			}
+
+			// @todo: allow checking specific request fields - how? json object dot notation?
+			if runOperators(string(body), rule.Operators) {
+				return true
+			}
 		}
 	}
 
-	return match
+	return false
 }
 
-func runOperator(field string, operatorKey string, operatorValue string) bool {
+func runOperators(field string, operator config.Operators) bool {
 	field = strings.ToLower(field)
-	operatorKey = strings.ToLower(operatorKey)
-	operatorValue = strings.ToLower(operatorValue)
 
-	switch operatorKey {
-	case config.RuleOperatorContains:
-		return strings.Contains(field, operatorValue)
+	if operator.Contains != "" {
+		parts := strings.Split(strings.ToLower(operator.Contains), "|")
 
-	case config.RuleOperatorNotContains:
-		return !strings.Contains(field, operatorValue)
+		for _, part := range parts {
+			log.Println(strings.Contains(field, part))
+			if strings.Contains(field, part) {
+				return true
+			}
+		}
 
-	case config.RuleOperatorExactly:
-		return field == operatorValue
-
-	case config.RuleOperatorNotExactly:
-		return field != operatorValue
-
-	case config.RuleOperatorRegex:
-
-	case config.RuleOperatorNotRegex:
-
+		return false
 	}
 
+	if operator.NotContains != "" {
+		match := false
+		parts := strings.Split(strings.ToLower(operator.NotContains), "|")
+		for _, part := range parts {
+			match = strings.Contains(field, part)
+		}
+		return !match
+	}
+
+	if operator.Exactly != "" {
+		return field == operator.Exactly
+	}
+
+	if operator.NotExactly != "" {
+		return field != operator.NotExactly
+	}
+
+	if operator.Regex != "" {
+		matched, err := regexp.Match(operator.Regex, []byte(field))
+		if err != nil {
+			log.Printf("Failed to parse regex: %v", err.Error())
+		}
+		return matched
+	}
+
+	if operator.NotRegex != "" {
+		matched, err := regexp.Match(operator.NotRegex, []byte(field))
+		if err != nil {
+			log.Printf("Failed to parse regex: %v", err.Error())
+		}
+		return !matched
+	}
+
+	log.Println("Rule has no operators!")
 	return false
 }
 
