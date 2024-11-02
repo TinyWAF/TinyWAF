@@ -20,24 +20,41 @@ type RuleGroup struct {
 }
 
 type Rule struct {
-	Id          string            `validate:"required"`
-	Inspect     []string          `validate:"required,gt=0,dive,oneof=url headers body ip"`
-	WhenMethods []string          `validate:"omitempty,gt=0"`
-	Fields      []string          `validate:"omitempty,gt=0"`
-	Operators   map[string]string `validate:"required,gt=0,dive,keys,oneof=contains notcontains exactly notexactly regex notregex,endkeys"`
+	Id          string    `validate:"required"`
+	Inspect     []string  `validate:"required,gt=0,unique,oneof=url headers body ip"`
+	WhenMethods []string  `validate:"omitempty,gt=0,unique,dive,containsany=lowercase"`
+	Fields      []string  `validate:"omitempty,gt=0,unique"`
+	Operators   Operators `validate:"required"`
 	Ratelimit   struct {
 		MaxAllowedRequests int `validate:"omitempty,gt=0"`
 		WithinMinutes      int `validate:"omitempty,gt=0"`
 	}
-	Action string `validate:"required,oneof=ignore warn block"`
+	Action string `validate:"required,oneof=ignore warn ratelimit block"`
+}
+
+type Operators struct {
+	// Case insensitive
+	Contains string
+	// Case insensitive
+	NotContains string
+
+	// Case sensitive
+	Exactly string
+	// Case sensitive
+	NotExactly string
+
+	Regex    string
+	NotRegex string
 }
 
 var ErrNoFirewallRulesLoaded = errors.New("No firewall rules loaded")
 
 var RuleActionIgnore = "ignore"
 var RuleActionWarn = "warn"
+var RuleActionRatelimit = "ratelimit"
 var RuleActionBlock = "block"
 
+// Other ideas to add: cookies
 var RuleInspectUrl = "url"
 var RuleInspectHeaders = "headers"
 var RuleInspectBody = "body"
