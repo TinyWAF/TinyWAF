@@ -74,7 +74,7 @@ func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule) bool {
 
 	// Loop over the possible inspection values (eg. URL, headers, body)
 	for _, inspect := range rule.Inspect {
-		switch strings.ToLower(inspect) {
+		switch inspect {
 		case config.RuleInspectUrl:
 			if runOperators(r.RequestURI, rule.Operators) {
 				return true
