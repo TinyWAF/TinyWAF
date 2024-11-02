@@ -16,13 +16,12 @@ type MainConfig struct {
 		}
 	}
 
-	// @todo: validations
 	Log struct {
-		Outfile string `validate:"required,filepath"`
-		Levels  struct {
-			Access bool
-			Warn   bool
-			Block  bool
+		File   string `validate:"required,filepath"`
+		Levels struct {
+			Debug bool `validate:"boolean"`
+			Warn  bool `validate:"boolean"`
+			Block bool `validate:"boolean"`
 		}
 	}
 

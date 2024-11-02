@@ -4,8 +4,8 @@ listen:
       # upstreamPort is optional, if not defined the upstream port is taken from the hostname above
       upstreamPort: 80
       tls:
-        certificatePath: "./data/tls/localhost.crt"
-        keyPath: "./data/tls/localhost.key"
+        certificatePath: ""
+        keyPath: ""
   # Set healthcheck to "" to disable it
   healthcheckPath: "/healthcheck"
   upstream:
@@ -16,9 +16,9 @@ listen:
     destination: http://localhost
 
 log:
-  outfile: ./data/tinywaf.log # /var/log/tinywaf.log
+  file: /var/log/tinywaf.log
   levels:
-    access: false # Log access requests to all URLs (not recommended on production)
+    debug: false # Log everything (will generate a huge amount of logs)
     warn: true # Log warnings about suspicious activity
     block: true # Log when requests are blocked due to rules
 
