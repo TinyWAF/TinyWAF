@@ -45,19 +45,22 @@ security settings (eg. with a set of rules enabled by detault).
 
 ## Development status
 
+Key
+* :large_orange_diamond: - Required for 1.0 release
+
 ### TinyWAF binary
 
 |**Feature**|**Status**|
 |:---|:---|
-| :large_orange_diamond: Request interception and reverse proxy forwarding | :heavy_check_mark: Done |
-| Health check endpoint | :heavy_check_mark: Done |
-| :large_orange_diamond: Define rules in YAML | :heavy_check_mark: Done |
-| :large_orange_diamond: Request rule evaluation | :heavy_check_mark: Done |
-| :large_orange_diamond: HTTPS/TLS support | :heavy_check_mark: Done |
+| :large_orange_diamond: Request interception and reverse proxy forwarding | :white_check_mark: Done |
+| Health check endpoint | :white_check_mark: Done |
+| :large_orange_diamond: Define rules in YAML | :white_check_mark: Done |
+| :large_orange_diamond: Request rule evaluation | :white_check_mark: Done |
+| :large_orange_diamond: HTTPS/TLS support | :white_check_mark: Done |
 | Rate limiting | :construction: In progress |
 | :large_orange_diamond: Performance optimisation | :x: Not started |
-| :large_orange_diamond: Add unit tests | :x: Not started |
-| :large_orange_diamond: Configurable log levels | :heavy_check_mark: Done |
+| :large_orange_diamond: Unit test coverage (+ github action) | :x: Not started |
+| :large_orange_diamond: Configurable log levels | :white_check_mark: Done |
 | :large_orange_diamond: Metrics/reporting | :x: Not started | <!-- aggregate telemetry for marketing site + reporting for TinyWAF Pro -->
 | Websocket forwarding | :x: Not started | <!-- https://github.com/koding/websocketproxy -->
 | Response rule evaluation | :x: Not started |
@@ -65,19 +68,25 @@ security settings (eg. with a set of rules enabled by detault).
 | AbuseIPDB integration | :x: Not started |
 | CrowdSec integration | :x: Not started |
 
-Key
-* :large_orange_diamond: - Required for 1.0 release
 
 ### TinyWAF default/maintained rulesets
 
 |**Ruleset**|**Status**|
 |:---|:---|
-| Port of OWASP CRS | :x: Not started |
+| :large_orange_diamond: Port of OWASP CRS | :x: Not started |
 | Ban AI (block bots scraping data for AI/LLM training) | :x: Not started |
-| No Wordpress (for sites not running Wordpress) | :x: Not started |
+| :large_orange_diamond: No Wordpress (for sites not running Wordpress) | :x: Not started |
 | No Drupal (for sites not running Drupal) | :x: Not started |
 | No Joomla (for sites not running Joomla) | :x: Not started |
 | ...others | :x: Not started |
+
+
+### TinyWAF website
+
+|**Task**|**Status**|
+|:---|:---|
+| :large_orange_diamond: Create website (single page) | :x: Not started |
+| :large_orange_diamond: Add docs at tinywaf.com/docs | :x: Not started |
 
 
 ## How are rules evaluated and requests blocked?
