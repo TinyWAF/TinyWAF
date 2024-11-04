@@ -1,11 +1,11 @@
 package internal
 
-// @todo: check validation rules are correct
 type MainConfig struct {
 	Listen struct {
-		Hosts         []string `validate:"required,gt=0,dive,hostname_port"`
-		Autotls       bool     `validate:"boolean"`
-		ForwardToPort uint     `validate:"required,gt=0"`
+		Hosts                []string `validate:"omitempty,gt=0"`
+		TlsDomains           []string `validate:"omitempty,gt=0"`
+		ForwardToLocalPort   uint     `validate:"required,gt=0"`
+		StripResponseHeaders []string
 	}
 
 	Log struct {
@@ -30,7 +30,7 @@ type MainConfig struct {
 }
 
 type RuleOverride struct {
-	Host    string `validate:"hostname_port"`
+	Host    string `validate:"hostname"`
 	Enable  []string
 	Disable []string
 }

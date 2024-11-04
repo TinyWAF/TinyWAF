@@ -26,11 +26,17 @@ func main() {
 		return
 	}
 
-	// @todo: do periodic cleanup of RuleEngine request memory
+	done := make(chan struct{})
 
 	err = webserver.Start(&cfg)
 	if err != nil {
 		logger.Fatal("Failed to start TinyWAF: %v", err.Error())
+		return
+	}
+
+	// Wait to receive something from the done channel before closing the app
+	select {
+	case <-done:
 		return
 	}
 }

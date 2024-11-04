@@ -1,12 +1,15 @@
 listen:
+  # Array of IP:port or non-TLS domain:port combinations to listen on
   hosts:
-    - localhost
-    - localhost:443
-  # If true, TLS is enabled for all hosts and port combinations
-  # If false, TLS is disabled
-  autotls: true # https://pkg.go.dev/golang.org/x/crypto/acme/autocert
-  forwardToPort: 8080
-  destination: "http://localhost"
+    - example.com:8080
+  # Array of TLS domains to listen on. TinyWAF will auto-provision TLS
+  # certificates for these domains from Let's Encrypt
+  tlsDomains:
+    - example.com
+  forwardToLocalPort: 80
+  # An array of headers that should be removed from the response
+  stripResponseHeaders:
+    - server
 
 log:
   # If file is not provided, logs will be written to stdout/stderr
@@ -16,19 +19,19 @@ log:
     warn: true # Log warnings about suspicious activity
     block: true # Log when requests are blocked due to rules
 
-# By default TinyWAF returns a basic HTML response if a request/response is not
-# handled (eg. it was blocked). To show custom (eg. branded) HTML pages to users
-# uncomment these lines:
+# By default TinyWAF returns a basic HTML response if a request is blocked). To
+# show custom (eg. branded) HTML pages to users customize these files then
+# uncomment the lines:
 html:
-#   blocked: /var/tinywaf/html/403-blocked.html
-#   unavailable: /var/tinywaf/html/503-unavailable.html
+  # blocked: /var/tinywaf/html/403-blocked.html
+  # unavailable: /var/tinywaf/html/503-unavailable.html
 
-ruleFiles:
+rulesets:
   # inspectOnly: true # Disables blocking, will log warnings instead
   include:
-    - /var/tinywaf/rules/default-managed/request-*.yaml
-    - /var/tinywaf/rules/request-*.yaml
-  # By default all included rules are enabled for all paths and methods
+    - /var/tinywaf/rules/default-managed/*.yaml
+    - /var/tinywaf/rules/*.yaml
+  # By default all included rules are enabled for all hosts and URL paths
   overrides:
     - host: "test.com"
       disable:

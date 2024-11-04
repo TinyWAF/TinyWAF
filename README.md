@@ -47,15 +47,16 @@ Key
 
 |**Feature**|**Status**|
 |:---|:---|
-| :large_orange_diamond: Request interception and reverse proxy forwarding | :white_check_mark: Done |
-| :large_orange_diamond: Define rules in YAML | :white_check_mark: Done |
-| :large_orange_diamond: Request rule evaluation | :white_check_mark: Done |
+| Request interception and reverse proxy forwarding | :white_check_mark: Done |
+| Define rules in YAML | :white_check_mark: Done |
+| Request rule evaluation | :white_check_mark: Done |
 | :large_orange_diamond: Automatic HTTPS/TLS certificates from LetsEncrypt | :construction: In progress |
-| :large_orange_diamond: Performance optimisation | :hourglass: Not started |
-| :large_orange_diamond: Unit test coverage (+ github action to run them) | :hourglass: Not started |
-| :large_orange_diamond: Configurable log levels | :white_check_mark: Done |
+| :large_orange_diamond: Override rules per host/path | :construction: In progress |
+| :large_orange_diamond: Performance testing + optimisation | :hourglass: Not started |
+| Configurable log levels | :white_check_mark: Done |
 | :large_orange_diamond: Stats reporting | :hourglass: Not started | <!-- aggregate telemetry for marketing site -->
 | Custom error pages | :hourglass: Not started |
+| Unit test coverage (+ github action to run them) | :hourglass: Not started |
 | Websocket forwarding | :hourglass: Not started | <!-- https://github.com/koding/websocketproxy -->
 | AbuseIPDB integration | :hourglass: Not started |
 | CrowdSec integration | :hourglass: Not started |
