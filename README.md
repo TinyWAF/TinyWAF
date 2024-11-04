@@ -29,16 +29,11 @@ shield the server from attacks.
 
 In no particular order:
 
-* TinyWAF is designed to run on the same host machine as the web server, however
-it should also be possible to run it on a separate, dedicated machine.
-* TinyWAF should be as lightweight and performant as possible, with as few
-features as possible.
-* TinyWAF should not act as a load balancer or reverse proxy (except the bare
-minimum to achieve the requirements of a firewall).
-* TinyWAF should be invisible to the user and webserver unless a request/response
-is blocked.
-* TinyWAF should be simple to configure, and ship with sensible default
-security settings (eg. with a set of rules enabled by detault).
+* TinyWAF is designed to run on the same host machine as the web server.
+* TinyWAF should be as lightweight and as performant as possible. (x? req/s)
+* TinyWAF should implement the bare minimum features to achieve the the requirements of a firewall.
+* TinyWAF should be invisible to the user and webserver unless a request/response is blocked.
+* TinyWAF should be simple to configure, and ship with sensible default rules enabled.
 * It should be possible to define custom firewall rules and policies for TinyWAF.
 * TinyWAF should be thoroughly unit-tested to prevent regressions and issues.
 
@@ -53,20 +48,19 @@ Key
 |**Feature**|**Status**|
 |:---|:---|
 | :large_orange_diamond: Request interception and reverse proxy forwarding | :white_check_mark: Done |
-| Health check endpoint | :white_check_mark: Done |
 | :large_orange_diamond: Define rules in YAML | :white_check_mark: Done |
 | :large_orange_diamond: Request rule evaluation | :white_check_mark: Done |
-| :large_orange_diamond: HTTPS/TLS support | :white_check_mark: Done |
-| Rate limiting | :construction: In progress |
-| :large_orange_diamond: Performance optimisation | :x: Not started |
-| :large_orange_diamond: Unit test coverage (+ github action) | :x: Not started |
+| :large_orange_diamond: Automatic HTTPS/TLS certificates from LetsEncrypt | :construction: In progress |
+| :large_orange_diamond: Performance optimisation | :hourglass: Not started |
+| :large_orange_diamond: Unit test coverage (+ github action to run them) | :hourglass: Not started |
 | :large_orange_diamond: Configurable log levels | :white_check_mark: Done |
-| :large_orange_diamond: Metrics/reporting | :x: Not started | <!-- aggregate telemetry for marketing site + reporting for TinyWAF Pro -->
-| Websocket forwarding | :x: Not started | <!-- https://github.com/koding/websocketproxy -->
-| Response rule evaluation | :x: Not started |
-| Custom error pages | :x: Not started |
-| AbuseIPDB integration | :x: Not started |
-| CrowdSec integration | :x: Not started |
+| :large_orange_diamond: Stats reporting | :hourglass: Not started | <!-- aggregate telemetry for marketing site -->
+| Custom error pages | :hourglass: Not started |
+| Websocket forwarding | :hourglass: Not started | <!-- https://github.com/koding/websocketproxy -->
+| AbuseIPDB integration | :hourglass: Not started |
+| CrowdSec integration | :hourglass: Not started |
+| Response rule evaluation | :x: Not planned |
+| Rate limiting | :x: Not Planned |
 
 
 ### TinyWAF default/maintained rulesets
@@ -76,6 +70,7 @@ Key
 | :large_orange_diamond: Port of OWASP CRS | :x: Not started |
 | Ban AI (block bots scraping data for AI/LLM training) | :x: Not started |
 | :large_orange_diamond: No Wordpress (for sites not running Wordpress) | :x: Not started |
+| :large_orange_diamond: Wordpress (for sites that DO run Wordpress) | :x: Not started |
 | No Drupal (for sites not running Drupal) | :x: Not started |
 | No Joomla (for sites not running Joomla) | :x: Not started |
 | ...others | :x: Not started |
