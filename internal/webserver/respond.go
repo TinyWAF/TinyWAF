@@ -7,7 +7,7 @@ import (
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
 )
 
-const wafInspectionIdHeaderName string = "X-WAF-InspectionID"
+const wafInspectionIdHeaderName string = "X-WAF-RequestID"
 
 func respondUnavailable(w http.ResponseWriter) {
 	// @todo: if config custom HTML, load it and return that as the body

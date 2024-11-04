@@ -17,7 +17,6 @@ type InspectionResult struct {
 	TriggerdByRuleId string
 	RequestorIp      string
 	ShouldBlock      bool
-	ShouldRateLimit  bool
 	ShouldWarn       bool
 }
 
@@ -38,17 +37,9 @@ func InspectRequest(r *http.Request, inspectionId string) InspectionResult {
 
 	// Allow this request
 	return InspectionResult{
-		InspectionId:    inspectionId,
-		RequestorIp:     r.RemoteAddr,
-		ShouldRateLimit: false,
-		ShouldBlock:     false,
+		InspectionId: inspectionId,
+		RequestorIp:  r.RemoteAddr,
 	}
-}
-
-func InspectResponse(r *http.Request, inspectionId string) InspectionResult {
-
-	// @todo
-	return InspectionResult{}
 }
 
 func matchesRule(r *http.Request, ruleGroupName string, rule config.Rule, inspectionId string) bool {

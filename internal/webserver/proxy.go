@@ -44,27 +44,13 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 			)
 		}
 
-		if inspection.ShouldRateLimit {
-			// @todo: log rate limit info (depending on config)
-			logger.Block(
-				"%v :: RATELIMITED request from IP '%v', rule '%v'",
-				inspection.InspectionId,
-				inspection.RequestorIp,
-				inspection.TriggerdByRuleId,
-			)
-			respondRateLimited(inspection, w)
-			return
-		}
-
-		// @todo: check how this works with SSL
-		// Update the headers to allow for SSL redirection
-		// r.URL.Host = targetUrl.Host
-		// r.URL.Scheme = targetUrl.Scheme
-		// r.Header.Set("X-Forwarded-Host", r.Header.Get("Host"))
-		// r.Host = targetUrl.Host
-
 		proxy.ModifyResponse = func(res *http.Response) error {
-			// @todo: ensure the waf inspection header is set?
+			res.Header.Add(wafInspectionIdHeaderName, inspection.InspectionId)
+
+			for _, headerToRemove := range loadedCfg.Listen.StripResponseHeaders {
+				res.Header.Del(headerToRemove)
+			}
+
 			return nil
 		}
 

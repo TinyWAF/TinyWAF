@@ -10,6 +10,7 @@ listen:
   # An array of headers that should be removed from the response
   stripResponseHeaders:
     - server
+    # - x-waf-requestid # Remove the inspection header added by tinywaf
 
 log:
   # If file is not provided, logs will be written to stdout/stderr
