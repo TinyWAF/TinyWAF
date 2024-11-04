@@ -50,7 +50,7 @@ Key
 | Request interception and reverse proxy forwarding | :white_check_mark: Done |
 | Define rules in YAML | :white_check_mark: Done |
 | Request rule evaluation | :white_check_mark: Done |
-| :large_orange_diamond: Automatic HTTPS/TLS certificates from LetsEncrypt | :construction: In progress |
+| :large_orange_diamond: Automatic HTTPS/TLS certificates from LetsEncrypt | :white_check_mark: Done |
 | :large_orange_diamond: Override rules per host/path | :construction: In progress |
 | :large_orange_diamond: Performance testing + optimisation | :hourglass: Not started |
 | Configurable log levels | :white_check_mark: Done |
