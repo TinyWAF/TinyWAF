@@ -3,12 +3,9 @@ package internal
 // @todo: check validation rules are correct
 type MainConfig struct {
 	Listen struct {
-		Hosts           []ListenHost `validate:"required,gt=0"`
-		HealthcheckPath string
-
-		Upstream struct {
-			Destination string `validate:"required"`
-		}
+		Hosts         []string `validate:"required,gt=0,dive,hostname_port"`
+		Autotls       bool     `validate:"boolean"`
+		ForwardToPort uint     `validate:"required,gt=0"`
 	}
 
 	Log struct {
@@ -20,42 +17,20 @@ type MainConfig struct {
 		}
 	}
 
-	RequestMemory struct {
-		Enabled       bool `validate:"boolean"`
-		MaxAgeMinutes int  `validate:"required"`
-		MaxSize       int  `validate:"required"`
-	}
-
 	Html struct {
-		Blocked     string `validate:"omitempty,file"`
-		Ratelimit   string `validate:"omitempty,file"`
-		Unavailable string `validate:"omitempty,file"`
+		Blocked     string `validate:"omitempty,filepath"`
+		Unavailable string `validate:"omitempty,filepath"`
 	}
 
-	RuleFiles struct {
-		WarnInsteadOfBlock bool
-		Request            struct {
-			Src       []string `validate:"dive,filepath"`
-			Overrides []RuleOverride
-		}
-		Response struct {
-			Src       []string `validate:"dive,filepath"`
-			Overrides []RuleOverride
-		}
-	}
-}
-
-type ListenHost struct {
-	Host         string `validate:"required,host_port"`
-	UpstreamPort uint   `validate:"omitempty,gt=0"`
-	Tls          struct {
-		CertificatePath string `validate:"omitempty,file"`
-		KeyPath         string `validate:"omitempty,file"`
+	Rulesets struct {
+		InspectOnly bool     `validate:"boolean"`
+		Include     []string `validate:"dive,filepath"`
+		Overrides   []RuleOverride
 	}
 }
 
 type RuleOverride struct {
-	Path   string
-	Rule   string
-	Action string
+	Host    string `validate:"hostname_port"`
+	Enable  []string
+	Disable []string
 }

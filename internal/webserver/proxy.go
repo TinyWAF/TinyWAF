@@ -23,10 +23,6 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 
 		logger.Debug("%v :: Request access: %v from %v", inspectionId, r.URL, r.RemoteAddr)
 
-		if loadedCfg.RequestMemory.Enabled {
-			ruleengine.RememberRequest(r)
-		}
-
 		inspection := ruleengine.InspectRequest(r, inspectionId)
 		if inspection.ShouldBlock {
 			logger.Block(
@@ -67,11 +63,9 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 		// r.Header.Set("X-Forwarded-Host", r.Header.Get("Host"))
 		// r.Host = targetUrl.Host
 
-		if loadedCfg.RequestMemory.Enabled {
-			proxy.ModifyResponse = func(res *http.Response) error {
-				// @todo: run response rule analysis
-				return nil
-			}
+		proxy.ModifyResponse = func(res *http.Response) error {
+			// @todo: ensure the waf inspection header is set?
+			return nil
 		}
 
 		// If we got this far, the request is allowed to continue upstream

@@ -74,15 +74,9 @@ func LoadRules(cfg *internal.MainConfig) (Rules, error) {
 	responseRuleGroups := []RuleGroup{}
 	numRulesLoaded := 0
 
-	for _, globPattern := range cfg.RuleFiles.Request.Src {
+	for _, globPattern := range cfg.Rulesets.Include {
 		rules, numLoaded := loadRulesFromGlob(globPattern)
 		requestRuleGroups = append(requestRuleGroups, rules...)
-		numRulesLoaded += numLoaded
-	}
-
-	for _, globPattern := range cfg.RuleFiles.Response.Src {
-		rules, numLoaded := loadRulesFromGlob(globPattern)
-		responseRuleGroups = append(responseRuleGroups, rules...)
 		numRulesLoaded += numLoaded
 	}
 

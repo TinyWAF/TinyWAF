@@ -1,57 +1,38 @@
 listen:
   hosts:
-    - host: localhost:443
-      # upstreamPort is optional, if not defined the upstream port is taken from the hostname above
-      upstreamPort: 80
-      tls:
-        certificatePath: ""
-        keyPath: ""
-  # Set healthcheck to "" to disable it
-  healthcheckPath: "/healthcheck"
-  upstream:
-    # Only one destination server can be set. The hostname, port and path of the
-    # request will be copied from the original one.
-    # The protocol (HTTP/HTTPS) is required (HTTP is recommended for same-machine,
-    # HTTPS is recommended for separate machine)
-    destination: http://localhost
+    - localhost
+    - localhost:443
+  # If true, TLS is enabled for all hosts and port combinations
+  # If false, TLS is disabled
+  autotls: true # https://pkg.go.dev/golang.org/x/crypto/acme/autocert
+  forwardToPort: 8080
+  destination: "http://localhost"
 
 log:
+  # If file is not provided, logs will be written to stdout/stderr
   file: /var/log/tinywaf.log
   levels:
     debug: false # Log everything (will generate a huge amount of logs)
     warn: true # Log warnings about suspicious activity
     block: true # Log when requests are blocked due to rules
 
-requestMemory:
-  # Request memory is disabled by default because it consumes a lot of ram
-  enabled: false
-  # How long we should keep request history for
-  maxAgeMinutes: 15
-  # How many requests per client IP should we keep within the maxAge
-  maxSize: 100
-
 # By default TinyWAF returns a basic HTML response if a request/response is not
 # handled (eg. it was blocked). To show custom (eg. branded) HTML pages to users
 # uncomment these lines:
 html:
 #   blocked: /var/tinywaf/html/403-blocked.html
-#   ratelimit: /var/tinywaf/html/429-ratelimit.html
 #   unavailable: /var/tinywaf/html/503-unavailable.html
 
-# WIP config schema for including and disabling rules
 ruleFiles:
-  request:
-    src:
-      - /var/tinywaf/rules/default-managed/request-*.yaml
-      - /var/tinywaf/rules/request-*.yaml
-    # By default all included rules are enabled for all paths and methods
-    overrides:
-      - path: /my-wp-site/*
-        rule: no-wordpress:*
-        action: none # Disable all rules in the no-wordpress group for this path
-  response:
-    src:
-      - /var/tinywaf/rules/default-managed/response-*.yaml
-      - /var/tinywaf/rules/response-*.yaml
-    overrides:
-      # Modify rules based on paths
+  # inspectOnly: true # Disables blocking, will log warnings instead
+  include:
+    - /var/tinywaf/rules/default-managed/request-*.yaml
+    - /var/tinywaf/rules/request-*.yaml
+  # By default all included rules are enabled for all paths and methods
+  overrides:
+    - host: "test.com"
+      disable:
+        - "GET::/my-wp-site/*::no-wordpress:*" # Disable all rules in the 'no-wordpress' group for GET requests to test.com/my-wp-site
+    - host: "example.com"
+      disable:
+        - "*::*::no-bots:*" # Disable all rules in the 'no-bots' group for all requests to any path on example.com

@@ -29,19 +29,10 @@ func InspectRequest(r *http.Request, inspectionId string) InspectionResult {
 					InspectionId:     inspectionId,
 					TriggerdByRuleId: fmt.Sprintf("%s:%s", ruleGroup.Group, rule.Id),
 					RequestorIp:      r.RemoteAddr,
-					ShouldBlock:      rule.Action == config.RuleActionBlock && !loadedCfg.RuleFiles.WarnInsteadOfBlock,
-					ShouldWarn:       rule.Action == config.RuleActionWarn || loadedCfg.RuleFiles.WarnInsteadOfBlock,
+					ShouldBlock:      rule.Action == config.RuleActionBlock && !loadedCfg.Rulesets.InspectOnly,
+					ShouldWarn:       rule.Action == config.RuleActionWarn || loadedCfg.Rulesets.InspectOnly,
 				}
 			}
-		}
-	}
-
-	if loadedCfg.RequestMemory.Enabled {
-		// If we got this far the request is not blocked. Continue checking rate limits if enabled
-		_, ok := GetRememberedRequestsForIp(r.RemoteAddr)
-		if ok {
-			// @todo: apply rate limiting
-			// @todo: check for enumeration attack
 		}
 	}
 

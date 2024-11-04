@@ -1,8 +1,8 @@
 <h1 align="center">🚧 TinyWAF 🚧</h1>
 
 <p align="center">
-TinyWAF is a lightweight Web Application Firewall designed for self-hosting.
-It can run on the same machine as your web server, or on a dedicated machine.
+TinyWAF is a lightweight Web Application Firewall designed for self-hosting on
+the same machine as your web server.
 </p>
 
 > [!WARNING]
