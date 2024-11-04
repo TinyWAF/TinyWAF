@@ -27,6 +27,14 @@ html:
   # blocked: /var/tinywaf/html/403-blocked.html
   # unavailable: /var/tinywaf/html/503-unavailable.html
 
+# Send anonymous aggregated stats every few minutes to TinyWAF. These stats only
+# include the following data: "requestsInspected: X, blockedRequests: Y". These
+# aggregated numbers are used to increment the counters on tinywaf.com.
+stats:
+  enabled: true
+  # Set to a custom URL to receieve the stats to your own server instead
+  # postUrl: ""
+
 rulesets:
   # inspectOnly: true # Disables blocking, will log warnings instead
   include:

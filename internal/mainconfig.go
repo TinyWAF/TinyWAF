@@ -22,6 +22,12 @@ type MainConfig struct {
 		Unavailable string `validate:"omitempty,filepath"`
 	}
 
+	Stats struct {
+		Enabled      bool `validate:"boolean"`
+		PostUrl      string
+		IntervalSecs uint
+	}
+
 	Rulesets struct {
 		InspectOnly bool     `validate:"boolean"`
 		Include     []string `validate:"dive,filepath"`

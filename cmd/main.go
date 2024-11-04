@@ -7,8 +7,13 @@ import (
 	"github.com/TinyWAF/TinyWAF/internal/config"
 	"github.com/TinyWAF/TinyWAF/internal/logger"
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
+	"github.com/TinyWAF/TinyWAF/internal/telemetry"
 	"github.com/TinyWAF/TinyWAF/internal/webserver"
 )
+
+// Build script should tag the commit with the version, then run this:
+// go build -i -v -ldflags="-X main.version=$(git describe --always --long --dirty)" github.com/TinyWAF/TinyWAF
+var version = "undefined"
 
 func main() {
 	cfg, err := config.LoadConfig()
@@ -19,6 +24,7 @@ func main() {
 
 	setupDirs(&cfg)
 	logger.Init(&cfg)
+	telemetry.Init()
 
 	err = ruleengine.Init(&cfg)
 	if err != nil {
@@ -32,6 +38,10 @@ func main() {
 	if err != nil {
 		logger.Fatal("Failed to start TinyWAF: %v", err.Error())
 		return
+	}
+
+	if cfg.Stats.Enabled {
+		telemetry.Start(&cfg, version)
 	}
 
 	// Wait to receive something from the done channel before closing the app

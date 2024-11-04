@@ -50,11 +50,11 @@ Key
 | Request interception and reverse proxy forwarding | :white_check_mark: Done |
 | Define rules in YAML | :white_check_mark: Done |
 | Request rule evaluation | :white_check_mark: Done |
-| :large_orange_diamond: Automatic HTTPS/TLS certificates from LetsEncrypt | :white_check_mark: Done |
+| Automatic HTTPS/TLS certificates from LetsEncrypt | :white_check_mark: Done |
 | :large_orange_diamond: Override rules per host/path | :construction: In progress |
 | :large_orange_diamond: Performance testing + optimisation | :hourglass: Not started |
 | Configurable log levels | :white_check_mark: Done |
-| :large_orange_diamond: Stats reporting | :hourglass: Not started | <!-- aggregate telemetry for marketing site -->
+| Anonymous stats reporting for tinywaf.com counters | :white_check_mark: Done |
 | Custom error pages | :hourglass: Not started |
 | Unit test coverage (+ github action to run them) | :hourglass: Not started |
 | Websocket forwarding | :hourglass: Not started | <!-- https://github.com/koding/websocketproxy -->
@@ -68,21 +68,22 @@ Key
 
 |**Ruleset**|**Status**|
 |:---|:---|
-| :large_orange_diamond: Port of OWASP CRS | :x: Not started |
-| Ban AI (block bots scraping data for AI/LLM training) | :x: Not started |
-| :large_orange_diamond: No Wordpress (for sites not running Wordpress) | :x: Not started |
-| :large_orange_diamond: Wordpress (for sites that DO run Wordpress) | :x: Not started |
-| No Drupal (for sites not running Drupal) | :x: Not started |
-| No Joomla (for sites not running Joomla) | :x: Not started |
-| ...others | :x: Not started |
+| :large_orange_diamond: Port of OWASP CRS | :hourglass: Not started |
+| Ban AI (block bots scraping data for AI/LLM training) | :hourglass: Not started |
+| :large_orange_diamond: No Wordpress (for sites not running Wordpress) | :hourglass: Not started |
+| :large_orange_diamond: Wordpress (for sites that DO run Wordpress) | :hourglass: Not started |
+| No Drupal (for sites not running Drupal) | :hourglass: Not started |
+| No Joomla (for sites not running Joomla) | :hourglass: Not started |
+| ...others | :hourglass: Not started |
 
 
 ### TinyWAF website
 
 |**Task**|**Status**|
 |:---|:---|
-| :large_orange_diamond: Create website (single page) | :x: Not started |
-| :large_orange_diamond: Add docs at tinywaf.com/docs | :x: Not started |
+| :large_orange_diamond: Create website (single page) | :hourglass: Not started |
+| :large_orange_diamond: Request stats API + counter | :hourglass: Not started |
+| :large_orange_diamond: Add docs at tinywaf.com/docs | :hourglass: Not started |
 
 
 ## How are rules evaluated and requests blocked?

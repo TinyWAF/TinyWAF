@@ -7,6 +7,7 @@ import (
 
 	"github.com/TinyWAF/TinyWAF/internal/logger"
 	"github.com/TinyWAF/TinyWAF/internal/ruleengine"
+	"github.com/TinyWAF/TinyWAF/internal/telemetry"
 )
 
 func NewProxy(target *url.URL) *httputil.ReverseProxy {
@@ -16,6 +17,7 @@ func NewProxy(target *url.URL) *httputil.ReverseProxy {
 
 func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		telemetry.AddRequest()
 		inspectionId := ruleengine.GenerateInspectionId()
 
 		// Pass the inspection ID upstream and make it available for use in proxy error handler
@@ -25,6 +27,7 @@ func ProxyRequestHandler(proxy *httputil.ReverseProxy, targetUrl *url.URL) func(
 
 		inspection := ruleengine.InspectRequest(r, inspectionId)
 		if inspection.ShouldBlock {
+			telemetry.AddBlocked()
 			logger.Block(
 				"%v :: Denied request from IP '%v', rule '%v'",
 				inspection.InspectionId,
